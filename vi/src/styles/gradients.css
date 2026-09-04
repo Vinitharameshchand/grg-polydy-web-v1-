@@ -1,0 +1,166 @@
+/* ==========================================================================
+   Gradients
+   Four named ramps used consistently, so the site reads as one palette with
+   depth rather than a collection of one-off colour fades. Gradient text is
+   reserved for numerals and the hero emphasis word — never body copy — and
+   the amber ramp only ever sits on navy, where its darkest stop is 7:1.
+   ========================================================================== */
+
+:root {
+  --grad-amber: linear-gradient(135deg, #ffd27a 0%, #e8a317 58%, #f0b23a 100%);
+  --grad-amber-h: linear-gradient(90deg, #ffd27a, #e8a317 60%, #f0b23a);
+  --grad-navy: linear-gradient(160deg, #163564 0%, #0b1e3f 52%, #071630 100%);
+  --grad-ink: linear-gradient(120deg, #0b1e3f 0%, #1d4e89 100%);
+  --grad-cool: linear-gradient(180deg, #edf3fb 0%, #ffffff 72%);
+}
+
+/* ------------------------------------------------------------- numerals */
+/* Big figures get the ink ramp on light grounds, the amber ramp on navy. */
+.hero__meta strong,
+.fact__val {
+  background: var(--grad-ink);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.hero__panel strong,
+.hero__panel strong span {
+  background: var(--grad-amber);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.card__num {
+  background: var(--grad-amber-h);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+/* Section watermarks: filled with the ink ramp at low opacity instead of a
+   hairline stroke, so they sit in the ground rather than on it. */
+.cols__num {
+  -webkit-text-stroke: 0;
+  background: var(--grad-ink);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  opacity: 0.09;
+}
+.section--dark .cols__num {
+  background: linear-gradient(120deg, #ffffff, #7fa8d8);
+  -webkit-background-clip: text;
+  background-clip: text;
+  opacity: 0.1;
+}
+
+/* -------------------------------------------------------------- buttons */
+.btn--accent {
+  background: var(--grad-amber);
+  border-color: transparent;
+}
+.btn--accent::before {
+  background: linear-gradient(135deg, #ffe0a0, #f0b23a 60%, #ffd27a);
+}
+.btn--solid {
+  background: var(--grad-ink);
+}
+.btn--solid::before {
+  background: linear-gradient(120deg, #1d4e89, #2a66ad);
+}
+
+/* ----------------------------------------------------------------- rules */
+/* Hairline accents fade at their ends instead of stopping dead. */
+.label--bar::before {
+  background: var(--grad-amber-h);
+}
+.progress span {
+  background: linear-gradient(90deg, #ffd27a, #e8a317 40%, #1d4e89);
+}
+.secnav__list a::after {
+  background: var(--grad-amber-h);
+}
+.footer__h::after {
+  background: var(--grad-amber-h);
+  width: 34px;
+}
+.footer__seam {
+  background: linear-gradient(90deg, transparent, #e8a317 14%, #ffd27a 30%, rgba(255, 255, 255, 0.3) 60%, transparent);
+}
+.hero--dark::after {
+  background: linear-gradient(90deg, #ffd27a, #e8a317 30%, rgba(232, 163, 23, 0.1) 70%, transparent);
+}
+.track__fill {
+  background: linear-gradient(180deg, #ffd27a, #e8a317 30%, #1d4e89 75%, #0b1e3f);
+}
+.compliance {
+  background-image: linear-gradient(180deg, #ffd27a, #e8a317 60%, transparent);
+}
+
+/* ------------------------------------------------------- card gradient border */
+/* On hover the card's edge becomes a light ramp — an actual gradient border,
+   painted on a masked pseudo-element so the glass fill underneath is untouched. */
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  pointer-events: none;
+  background: linear-gradient(135deg, #ffd27a 0%, rgba(232, 163, 23, 0.55) 35%, rgba(127, 168, 216, 0.5) 70%, #ffffff 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s var(--ease);
+}
+.card:hover::after {
+  opacity: 1;
+}
+.card:hover {
+  border-color: transparent;
+}
+
+/* -------------------------------------------------------------- surfaces */
+.ticker {
+  background: linear-gradient(90deg, #f3f6fb, #ffffff 30%, #ffffff 70%, #f3f6fb);
+}
+.pagehead {
+  background: var(--grad-cool);
+}
+.hero__panel {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.03) 60%, rgba(127, 168, 216, 0.08));
+}
+.hero__tag {
+  background: linear-gradient(120deg, rgba(6, 16, 39, 0.78), rgba(29, 78, 137, 0.55));
+}
+/* Photo tiles: a navy ramp rises from the base on hover so the caption reads. */
+.shot__btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent 55%, rgba(6, 16, 39, 0.55));
+  opacity: 0;
+  transition: opacity 0.4s var(--ease);
+}
+.shot__btn:hover::after,
+.shot__btn:focus-visible::after {
+  opacity: 1;
+}
+.lb__scrim {
+  background: radial-gradient(90% 90% at 50% 40%, rgba(11, 30, 63, 0.86), rgba(4, 10, 24, 0.95));
+}
+/* Link underlines draw as a ramp. */
+.link {
+  background-image: var(--grad-ink);
+}
+.section--dark .link {
+  background-image: var(--grad-amber-h);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card::after,
+  .shot__btn::after {
+    transition: none;
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "name": "grg-polydynamics",
+  "version": "3.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Website for GRG Polydynamics Private Limited — React + Vite, prerendered to static HTML",
+  "scripts": {
+    "dev": "vite",
+    "build": "npm run build:client && npm run build:server && npm run prerender",
+    "build:client": "vite build --outDir dist",
+    "build:server": "vite build --ssr src/entry-server.jsx --outDir dist/server",
+    "prerender": "node scripts/prerender.mjs",
+    "preview": "vite preview --port 8080",
+    "serve": "node scripts/serve.mjs",
+    "images": "node scripts/images.mjs",
+    "fonts": "node scripts/fetch-fonts.mjs",
+    "audit:a11y": "node scripts/audit.mjs",
+    "probe": "node scripts/probe.mjs",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --project=desktop --headed",
+    "capture:3d": "node scripts/capture-3d.mjs"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.30.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.62.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "semver": "^7.8.5",
+    "sharp": "^0.35.4",
+    "vite": "^5.4.11"
+  }
+}

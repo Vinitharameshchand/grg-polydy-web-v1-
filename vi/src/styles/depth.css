@@ -1,0 +1,261 @@
+/* ==========================================================================
+   Depth
+   CSS 3D: pointer-tracked tilt with a moving highlight, perspective layering,
+   3D lifts. Transforms only — everything here composites. Fully inert under
+   reduced motion and on touch (the Tilt component never attaches there).
+   ========================================================================== */
+
+/* ---------------------------------------------------------------- tilt */
+.tilt {
+  position: relative;
+  perspective: 1100px;
+  transform-style: preserve-3d;
+  height: 100%;
+}
+.tilt > * {
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(var(--tz, 0px));
+  transform-style: preserve-3d;
+  transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s var(--ease),
+    border-color 0.35s var(--ease), background 0.35s var(--ease);
+  height: 100%;
+}
+/* A tilted child that is also a Reveal element: `.reveal.in { transform:none }`
+   is more specific than `.tilt > *` and silently cancelled the tilt — the
+   angle was computed but never applied. Match the specificity so it wins. */
+.tilt > .reveal.in,
+.tilt > .reveal--fade.in {
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(var(--tz, 0px));
+}
+/* While the pointer is over it, follow instantly; the ease is for settling. */
+.tilt.is-tilting > * {
+  transition: transform 0.12s ease-out, box-shadow 0.5s var(--ease),
+    border-color 0.35s var(--ease), background 0.35s var(--ease);
+  will-change: transform;
+}
+
+/* Specular highlight riding the surface where the pointer is. */
+.tilt--glare::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    380px circle at var(--gx, 50%) var(--gy, 50%),
+    rgba(255, 255, 255, 0.22),
+    rgba(255, 255, 255, 0.05) 32%,
+    transparent 62%
+  );
+  transform: translateZ(1px);
+  transition: opacity 0.4s var(--ease);
+}
+.tilt--glare.is-tilting::after {
+  opacity: 1;
+}
+/* On the light gallery tiles the highlight is warm rather than white. */
+.gallery .tilt--glare::after {
+  background: radial-gradient(
+    340px circle at var(--gx, 50%) var(--gy, 50%),
+    rgba(255, 214, 120, 0.28),
+    rgba(255, 214, 120, 0.06) 34%,
+    transparent 62%
+  );
+}
+
+/* The hover lift from the card system is replaced by the 3D lift here, so the
+   two do not stack into a double move. */
+.tilt .card:hover,
+.tilt .tile:hover {
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(var(--tz, 0px));
+}
+.tilt .card:hover {
+  box-shadow: 0 36px 80px rgba(3, 9, 24, 0.55);
+}
+.tilt .tile {
+  padding: 4px;
+  margin: -4px;
+}
+
+/* Contents sit at slightly different depths so the tilt reads as a solid
+   object rather than a flat card rotating. */
+.card__num,
+.card h3 {
+  transform: translateZ(18px);
+}
+.card p,
+.card .link {
+  transform: translateZ(8px);
+}
+.tile h3,
+.tile p {
+  transform: translateZ(10px);
+}
+.tile__media {
+  transform: translateZ(4px);
+}
+
+/* ------------------------------------------------------------ hero panel */
+.hero__inner {
+  perspective: 1400px;
+}
+/* `.tilt { height: 100% }` exists so cards fill their grid cells. In the
+   masthead it stretched the stat panel to the full hero height on phones,
+   leaving each cell with a void beneath its figure. Size to content here. */
+.hero__inner .tilt,
+.hero__inner .tilt > * {
+  height: auto;
+}
+.hero__panel {
+  transform-style: preserve-3d;
+}
+.hero__panel strong {
+  transform: translateZ(14px);
+}
+.hero__panel li > span {
+  transform: translateZ(6px);
+}
+/* The glass panel's shadow deepens as it comes forward. */
+.tilt.is-tilting > .hero__panel {
+  box-shadow: 0 44px 100px rgba(3, 9, 24, 0.6);
+}
+
+/* -------------------------------------------------------------- gallery */
+.gallery {
+  perspective: 1200px;
+}
+.gallery .tilt {
+  height: auto;
+}
+.gallery .tilt > * {
+  height: auto;
+}
+.tilt .shot__btn {
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(var(--tz, 0px));
+  transform-style: preserve-3d;
+  box-shadow: 0 0 0 rgba(3, 9, 24, 0);
+}
+.tilt.is-tilting .shot__btn {
+  box-shadow: 0 30px 60px rgba(3, 9, 24, 0.28);
+}
+.shot__zoom {
+  transform: translateZ(20px) translateY(6px);
+}
+.shot__btn:hover .shot__zoom,
+.shot__btn:focus-visible .shot__zoom {
+  transform: translateZ(20px);
+}
+
+/* -------------------------------------------------------- brand mark */
+.brand {
+  perspective: 600px;
+}
+.brand__mark {
+  transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-style: preserve-3d;
+  backface-visibility: visible;
+}
+.brand:hover .brand__mark {
+  transform: rotateY(360deg);
+}
+
+/* ---------------------------------------------------- lightbox entrance */
+.lb {
+  perspective: 1600px;
+}
+.lb__panel {
+  animation: lbPanel3d 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+  transform-origin: 50% 60%;
+}
+@keyframes lbPanel3d {
+  from {
+    opacity: 0;
+    transform: rotateX(8deg) translateY(24px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------------------------------------------------- process rows */
+/* Rows come forward slightly as the amber track reaches them. */
+.track .row {
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), background 0.35s var(--ease);
+}
+.track .row:hover {
+  transform: translateZ(10px) translateX(4px);
+}
+.track {
+  perspective: 1000px;
+}
+
+/* ------------------------------------------------------- 3D entrance */
+/* A depth cue that does not need a pointer: cards, tiles and photos swing in
+   from a tilted plane as they scroll into view. Works on touch. */
+.reveal--3d {
+  opacity: 0;
+  transform: perspective(900px) rotateX(11deg) translateY(28px);
+  transform-origin: 50% 100%;
+  transition: opacity 0.7s var(--ease-out), transform 0.9s var(--ease-out);
+}
+.reveal--3d.in {
+  opacity: 1;
+  transform: perspective(900px) rotateX(0) translateY(0);
+}
+
+/* ----------------------------------------------------------- touch */
+/* No hover on a phone, so the pointer-driven parts are switched off — but
+   the depth stays visible: the stat panel sits at a fixed angle in space. */
+@media (hover: none), (pointer: coarse) {
+  .tilt--glare::after {
+    display: none;
+  }
+  .tilt .card:hover,
+  .tilt .tile:hover,
+  .track .row:hover {
+    transform: none;
+  }
+  .brand:hover .brand__mark {
+    transform: none;
+  }
+  .tilt > .hero__panel {
+    transform: perspective(1200px) rotateY(-7deg) rotateX(2.5deg);
+    box-shadow: -18px 30px 70px rgba(3, 9, 24, 0.5);
+  }
+}
+
+/* --------------------------------------------------- reduced motion */
+/* Everything flat and still. */
+@media (prefers-reduced-motion: reduce) {
+  .tilt > *,
+  .tilt > .hero__panel,
+  .tilt .card:hover,
+  .tilt .tile:hover,
+  .tilt .shot__btn,
+  .card__num,
+  .card h3,
+  .card p,
+  .card .link,
+  .tile h3,
+  .tile p,
+  .tile__media,
+  .hero__panel strong,
+  .hero__panel li > span,
+  .track .row:hover,
+  .reveal--3d,
+  .reveal--3d.in {
+    transform: none !important;
+    opacity: 1;
+  }
+  .tilt--glare::after {
+    display: none;
+  }
+  .brand:hover .brand__mark {
+    transform: none;
+  }
+  .lb__panel {
+    animation: none;
+  }
+}

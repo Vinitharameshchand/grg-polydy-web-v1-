@@ -1,0 +1,427 @@
+/* ==========================================================================
+   Impact layer
+   Cinematic dark masthead, amber promoted from a mark to a working colour,
+   a card system with real hover, and watermark numerals behind section heads.
+   Loaded after the base system so these rules win where they overlap.
+   ========================================================================== */
+
+/* ----------------------------------------------------------- amber button */
+/* Amber on navy is the industrial pairing (plant machinery, safety marking).
+   Navy text on amber measures ~7.5:1, so it is safe for the primary action. */
+.btn--accent {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--accent);
+  color: var(--brand);
+  font-weight: 600;
+  border-color: var(--accent);
+}
+.btn--accent::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--accent-hover);
+  transform: translateX(-101%);
+  transition: transform 0.45s var(--ease-out);
+}
+.btn--accent:hover::before {
+  transform: none;
+}
+.btn--accent:hover {
+  color: var(--brand);
+}
+
+/* ----------------------------------------------------- dark cinematic hero */
+.hero--dark {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: min(88vh, 900px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  background: var(--brand);
+  color: var(--on-brand);
+}
+
+/* Full-bleed photograph, 20% taller than the frame so it can drift. */
+.hero__media {
+  position: absolute;
+  inset: -10% 0;
+  z-index: -3;
+  will-change: transform;
+  transform: translate3d(0, var(--py, 0px), 0);
+}
+.hero__media picture,
+.hero__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: settle 18s var(--ease) both;
+}
+
+/* Scrim: near-solid navy on the left where the type sits, opening up to the
+   right so the plant is visible; a base fade seats the panel. */
+.hero__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(6, 16, 39, 0.96) 0%,
+      rgba(6, 16, 39, 0.9) 38%,
+      rgba(6, 16, 39, 0.46) 68%,
+      rgba(6, 16, 39, 0.62) 100%
+    ),
+    linear-gradient(180deg, rgba(6, 16, 39, 0.35) 0%, transparent 30%, rgba(6, 16, 39, 0.72) 100%);
+}
+
+/* Grid and glows repainted for the dark ground. */
+.hero--dark .hero__bg {
+  z-index: -1;
+  inset: 0;
+  height: 100%;
+}
+.hero--dark .hero__rule {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  mask-image: radial-gradient(90% 90% at 70% 40%, #000 10%, transparent 72%);
+  -webkit-mask-image: radial-gradient(90% 90% at 70% 40%, #000 10%, transparent 72%);
+}
+.hero--dark .hero__glow--warm {
+  background: radial-gradient(circle, rgba(232, 163, 23, 0.28), transparent 62%);
+  right: -6vw;
+  top: -10vw;
+}
+.hero--dark .hero__glow--cool {
+  background: radial-gradient(circle, rgba(47, 127, 200, 0.26), transparent 66%);
+}
+
+.hero__inner {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+  gap: clamp(32px, 5vw, 80px);
+  align-items: end;
+  padding-top: clamp(96px, 14vh, 160px);
+  padding-bottom: clamp(48px, 7vh, 88px);
+}
+@media (max-width: 960px) {
+  .hero__inner {
+    grid-template-columns: 1fr;
+    gap: 36px;
+    padding-top: clamp(64px, 10vh, 110px);
+  }
+}
+
+.hero__copy {
+  transform: translate3d(0, var(--sy, 0px), 0);
+  will-change: transform;
+}
+.hero--dark .label {
+  color: var(--accent);
+}
+.hero--dark .label--bar::before {
+  background: var(--accent);
+}
+.hero--dark .display {
+  color: #fff;
+  max-width: 13ch;
+  margin-top: 22px;
+  text-wrap: balance;
+}
+/* Emphasised word carries a warm gradient — colour as a typographic accent.
+   The gradient must be on the innermost text span: background-clip:text does
+   not paint through the overflow-hidden word clips, so on the wrapper the
+   word simply disappears. */
+.hero__em .at__i {
+  background: linear-gradient(92deg, #ffd27a 0%, var(--accent) 55%, #f7c65a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.hero--dark .lead {
+  color: var(--on-brand);
+  max-width: 52ch;
+  margin-top: 26px;
+}
+.hero--dark .btn-row {
+  margin-top: 34px;
+}
+.hero--dark .btn--line {
+  border-color: rgba(255, 255, 255, 0.34);
+  color: #fff;
+}
+.hero--dark .btn--line:hover {
+  background: #fff;
+  border-color: #fff;
+  color: var(--brand);
+}
+.hero--dark .cue {
+  color: var(--on-brand-dim);
+  margin-top: 30px;
+}
+.hero--dark .cue:hover {
+  color: #fff;
+}
+.hero--dark .cue__line {
+  background: rgba(255, 255, 255, 0.24);
+}
+
+/* Frosted stat panel over the photograph. */
+.hero__panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  box-shadow: 0 30px 80px rgba(3, 9, 24, 0.45);
+}
+.hero__panel li {
+  padding: clamp(20px, 2.4vw, 30px) clamp(18px, 2vw, 26px);
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+.hero__panel li:nth-child(2n) {
+  border-right: 0;
+}
+.hero__panel li:nth-last-child(-n + 2) {
+  border-bottom: 0;
+}
+.hero__panel strong {
+  display: block;
+  font-size: clamp(26px, 2.8vw, 36px);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+}
+/* Direct child only: CountUp renders a <span> inside <strong>, and a bare
+   descendant selector restyled the figure itself as a 10px label. */
+.hero__panel li > span {
+  display: block;
+  margin-top: 10px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--on-brand-dim);
+}
+.hero__panel strong span {
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+  text-transform: none;
+}
+@media (max-width: 480px) {
+  .hero__panel {
+    grid-template-columns: 1fr;
+  }
+  .hero__panel li {
+    border-right: 0;
+  }
+  .hero__panel li:nth-last-child(-n + 2) {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  }
+  .hero__panel li:last-child {
+    border-bottom: 0;
+  }
+}
+
+.hero--dark .hero__tag {
+  position: absolute;
+  left: auto;
+  right: clamp(16px, 4vw, 48px);
+  top: clamp(88px, 12vh, 130px);
+  bottom: auto;
+}
+@media (max-width: 960px) {
+  .hero--dark .hero__tag {
+    display: none;
+  }
+}
+
+/* Amber seam between the masthead and the ticker. */
+.hero--dark::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), rgba(232, 163, 23, 0.15) 60%, transparent);
+}
+
+/* ------------------------------------------------------------- card system */
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(24px, 2.6vw, 34px);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: transform 0.45s var(--ease-out), border-color 0.35s var(--ease),
+    background 0.35s var(--ease), box-shadow 0.45s var(--ease-out);
+}
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), transparent 80%);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.5s var(--ease-out);
+}
+.card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.07);
+  box-shadow: 0 24px 60px rgba(3, 9, 24, 0.45);
+}
+.card:hover::before {
+  transform: scaleX(1);
+}
+.card__num {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: var(--accent);
+  margin-bottom: 26px;
+}
+.card h3 {
+  color: #fff;
+  margin-bottom: 10px;
+}
+.card p {
+  font-size: 14.5px;
+  color: var(--on-brand);
+  flex: 1;
+}
+.card .link {
+  margin-top: 22px;
+  color: #fff;
+  background-image: linear-gradient(var(--accent), var(--accent));
+}
+@media (hover: none) {
+  .card:hover {
+    transform: none;
+  }
+}
+
+/* Industry tiles lift and reveal. */
+.tile {
+  position: relative;
+  padding-bottom: 6px;
+  transition: transform 0.45s var(--ease-out);
+}
+.tile__media {
+  position: relative;
+  overflow: hidden;
+}
+.tile__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 55%, rgba(6, 16, 39, 0.55));
+  opacity: 0;
+  transition: opacity 0.4s var(--ease);
+}
+.tile__arrow {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  background: var(--accent);
+  color: var(--brand);
+  opacity: 0;
+  transform: translate(8px, 8px);
+  transition: opacity 0.35s var(--ease), transform 0.4s var(--ease-out);
+  z-index: 1;
+}
+.tile__arrow svg {
+  width: 16px;
+  height: 16px;
+}
+.tile:hover {
+  transform: translateY(-6px);
+}
+.tile:hover .tile__media::after,
+.tile:hover .tile__arrow {
+  opacity: 1;
+  transform: none;
+}
+.tile:hover .tile__media img {
+  transform: scale(1.06);
+}
+.tile h3 {
+  transition: color 0.3s var(--ease);
+}
+.tile:hover h3 {
+  color: var(--link);
+}
+@media (hover: none) {
+  .tile:hover {
+    transform: none;
+  }
+}
+
+/* ------------------------------------------------- watermark numerals */
+.cols {
+  position: relative;
+}
+.cols__num {
+  position: absolute;
+  left: -0.06em;
+  top: -0.42em;
+  font-size: clamp(96px, 13vw, 176px);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.06em;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(15, 26, 43, 0.1);
+  pointer-events: none;
+  user-select: none;
+  z-index: -1;
+}
+.section--dark .cols__num {
+  -webkit-text-stroke-color: rgba(255, 255, 255, 0.1);
+}
+@media (max-width: 880px) {
+  .cols__num {
+    display: none;
+  }
+}
+
+/* Section labels pick up a little more presence. */
+.label--bar::before {
+  width: 22px;
+}
+
+/* --------------------------------------------------- stat band on About */
+.hero__meta strong {
+  color: var(--brand);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__media,
+  .hero__copy {
+    transform: none !important;
+  }
+  .hero__media img {
+    animation: none;
+  }
+  .card:hover,
+  .tile:hover {
+    transform: none;
+  }
+}

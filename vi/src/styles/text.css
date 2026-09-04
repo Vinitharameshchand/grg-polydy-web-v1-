@@ -1,0 +1,99 @@
+/* ==========================================================================
+   Text animation
+   Word-level entrances for headings and a scroll-linked lift for one showpiece
+   passage. Pieces are aria-hidden (the wrapper carries the full string), so
+   these are purely visual.
+   ========================================================================== */
+
+.at {
+  /* The split spans must not change how the text wraps or sits on the line. */
+  display: inline;
+}
+
+.at__w {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  /* Room for descenders inside the clip box, pulled back so line-height and
+     baseline are untouched. */
+  padding: 0.08em 0.03em 0.24em;
+  margin: -0.08em -0.03em -0.24em;
+}
+
+.at__i {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+/* ---- rise: each word clips up from its own baseline ---- */
+.at--rise .at__i {
+  transform: translateY(115%);
+}
+.at--rise.in .at__i {
+  animation: atRise 0.86s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--d, 0s);
+}
+@keyframes atRise {
+  from {
+    transform: translateY(115%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* ---- fade: words resolve in place, softer, for body copy ---- */
+.at--fade .at__w {
+  overflow: visible;
+}
+.at--fade .at__i {
+  opacity: 0;
+  transform: translateY(6px);
+  filter: blur(4px);
+}
+.at--fade.in .at__i {
+  animation: atFade 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--d, 0s);
+}
+@keyframes atFade {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+}
+
+/* ---- scroll-linked passage ---- */
+.sc__w {
+  display: inline-block;
+  /* --lit runs 0 -> 1 as the reading position passes the word. */
+  color: color-mix(in srgb, currentColor calc(var(--lit, 1) * 100%), transparent);
+  transition: color 0.18s linear;
+}
+/* color-mix is widely supported but not universal; without it the words simply
+   render at full colour, which is the correct fallback. */
+@supports not (color: color-mix(in srgb, red 50%, blue)) {
+  .sc__w {
+    color: inherit;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .at__i {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+    filter: none !important;
+  }
+  .at__w {
+    overflow: visible;
+  }
+  .sc__w {
+    color: inherit;
+  }
+}

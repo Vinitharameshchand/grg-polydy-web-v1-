@@ -1,0 +1,40 @@
+# Security + caching headers (Netlify / Cloudflare Pages format).
+# vercel.json carries the same policy for Vercel. If you deploy to Nginx or
+# Apache instead, port these headers to the server config — they are not
+# emitted by the static files themselves.
+
+/*
+  # Only this origin may load scripts/styles. 'unsafe-inline' on style-src is
+  # required because React sets inline style attributes (e.g. --p, --d, --i).
+  # No 'unsafe-inline' on script-src: all JS is external and hashed.
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-src https://www.google.com; form-action 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests
+  # Force HTTPS for two years, including subdomains.
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  # Do not let the browser guess a MIME type it was not given.
+  X-Content-Type-Options: nosniff
+  # Belt-and-braces with frame-ancestors above.
+  X-Frame-Options: DENY
+  # Send the origin, never the full path, to third parties.
+  Referrer-Policy: strict-origin-when-cross-origin
+  # Switch off device APIs this site never uses.
+  Permissions-Policy: geolocation=(), camera=(), microphone=(), payment=(), usb=(), interest-cohort=()
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Resource-Policy: same-origin
+
+# Fingerprinted build output is safe to cache forever.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+
+/images/gen/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# HTML must revalidate so deploys are picked up immediately.
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+/
+  Cache-Control: public, max-age=0, must-revalidate
