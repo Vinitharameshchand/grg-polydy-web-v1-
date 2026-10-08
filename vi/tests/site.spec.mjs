@@ -23,6 +23,12 @@ test.afterEach(async ({}, info) => {
 });
 
 test.describe('routes', () => {
+  /* Static checks only. Reduced motion pins the WebGL scenes to a still
+     frame: headless Chromium renders WebGL in software, and a live scene
+     plus video capture can push page teardown past the timeout. The live
+     scenes are covered in "3D scenes" below. */
+  test.use({ reducedMotion: 'reduce' });
+
   for (const route of ROUTES) {
     test(`${route} renders with one h1 and no broken images`, async ({ page }) => {
       await page.goto(route);
@@ -117,16 +123,45 @@ test.describe('keyboard and dialogs', () => {
     }).toBe(true);
   });
 
-  test('contact form blocks empty submit and confirms a valid one', async ({ page }) => {
-    await page.goto('/contact');
-    await page.locator('#enquiry-form button[type=submit]').click();
-    await expect(page.locator('.form__status')).toHaveCount(0);
+  /* The form posts to Web3Forms. Build with any VITE_WEB3FORMS_KEY (e.g.
+     "e2e") so the form is configured; the endpoint itself is mocked here, so
+     no real email is sent. */
+  const fillForm = async (page) => {
     await page.fill('#name', 'Playwright');
     await page.fill('#email', 'pw@example.com');
     await page.selectOption('#interest', { index: 1 });
     await page.fill('#message', 'Live test');
+  };
+
+  test('contact form blocks empty submit and sends a valid one', async ({ page }) => {
+    let sent = null;
+    await page.route('https://api.web3forms.com/submit', async (route) => {
+      sent = route.request().postDataJSON();
+      await route.fulfill({ json: { success: true, message: 'Email sent successfully!' } });
+    });
+    await page.goto('/contact');
+    await page.locator('#enquiry-form button[type=submit]').click();
+    await expect(page.locator('.form__status')).toHaveCount(0);
+    expect(sent, 'nothing sent for an invalid form').toBeNull();
+
+    await fillForm(page);
     await page.locator('#enquiry-form button[type=submit]').click();
     await expect(page.locator('.form__status')).toContainText(/Thank you, Playwright/);
+    expect(sent).toMatchObject({ name: 'Playwright', email: 'pw@example.com', message: 'Live test' });
+    expect(sent.access_key, 'built with VITE_WEB3FORMS_KEY').toBeTruthy();
+    expect(sent.botcheck).toBeUndefined();
+    await expect(page.locator('#name')).toHaveValue('');
+  });
+
+  test('contact form reports a failed send and keeps the input', async ({ page }) => {
+    await page.route('https://api.web3forms.com/submit', (route) =>
+      route.fulfill({ json: { success: false, message: 'Invalid access key' } })
+    );
+    await page.goto('/contact');
+    await fillForm(page);
+    await page.locator('#enquiry-form button[type=submit]').click();
+    await expect(page.locator('.form__status--error')).toContainText(/could not be sent/);
+    await expect(page.locator('#name')).toHaveValue('Playwright');
   });
 });
 

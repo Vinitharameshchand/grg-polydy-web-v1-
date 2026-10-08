@@ -1326,6 +1326,27 @@ a.row .h3 {
   font-size: 14.5px;
   color: var(--ink-2);
 }
+.form__status--error {
+  background: #fdf0ef;
+  border-left-color: #b42318;
+  color: #7a1a12;
+}
+.form__status--error a {
+  color: inherit;
+  text-decoration: underline;
+}
+.btn[disabled] {
+  opacity: 0.7;
+  cursor: progress;
+}
+/* Honeypot: off-screen, not display:none (some bots skip hidden fields). */
+.hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
 
 /* -------------------------------------------------------------- contact */
 .contact-grid {

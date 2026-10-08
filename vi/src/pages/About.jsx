@@ -1,5 +1,4 @@
 import { CTA, PageHead, Reveal, Section, SectionHead, Split } from '../components/ui';
-import usePageMeta from '../hooks/usePageMeta';
 
 const MODEL = [
   ['Requirement first.', 'Nothing enters the plant before a customer requirement review and feasibility study is closed.'],
@@ -11,10 +10,6 @@ const MODEL = [
 ];
 
 export default function About() {
-  usePageMeta(
-    'About — GRG Polydynamics Private Limited',
-    'Part of a professionally managed group with three decades of business endeavours and turnover above ₹300 crores. The plastics division was established in 2011 at Sriperumbudur, Chennai.'
-  );
 
   return (
     <>

@@ -4,6 +4,7 @@ import { company, nav } from '../data/site';
 import { Arrow } from './ui';
 import { useScrollProgress, useScrolledPast } from '../hooks/useScroll';
 import { BackToTop } from './scroll';
+import usePageMeta from '../hooks/usePageMeta';
 
 function Mark() {
   return (
@@ -231,7 +232,8 @@ function Header() {
     </>
   );
 }
-function Footer() {
+
+function Footer() {
   return (
     <footer className="footer">
       {/* Colour-grading layers: a warm bleed at the top edge and a cool lift
@@ -419,6 +421,7 @@ function ScrollManager() {
 
 export default function Layout() {
   const { pathname } = useLocation();
+  usePageMeta(pathname);
   return (
     <>
       <a className="skip" href="#main">

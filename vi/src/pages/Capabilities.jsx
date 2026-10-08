@@ -1,7 +1,6 @@
 import { CTA, PageHead, Reveal, Section, Split } from '../components/ui';
 import { SectionNav } from '../components/scroll';
 import { capabilitiesExtra, services } from '../data/site';
-import usePageMeta from '../hooks/usePageMeta';
 
 const PROCESS_TABLE = [
   ['Material', 'Material selection and validation against application requirement', 'Approved material specification'],
@@ -18,10 +17,6 @@ const TRANSFER = [
 ];
 
 export default function Capabilities() {
-  usePageMeta(
-    'Capabilities — GRG Polydynamics',
-    'Product development, prototyping, mould making, precision injection moulding, painting and chrome plating, screen and pad printing, metal casting and tooling transfer support.'
-  );
 
   const all = [...services, ...capabilitiesExtra];
 

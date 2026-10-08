@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 import { CTA, PageHead, Reveal, Section, SectionHead, Split } from '../components/ui';
 import { certifications } from '../data/site';
-import usePageMeta from '../hooks/usePageMeta';
 
 const COMMITMENTS = [
   ['Automotive-grade manufacturing standards', 'IATF 16949', 'Control plans, traceability and disciplined change management on every part number'],
@@ -18,10 +17,6 @@ const CONTROLS = [
 ];
 
 export default function Quality() {
-  usePageMeta(
-    'Quality & Certifications — GRG Polydynamics',
-    'IATF 16949, ISO 14001:2015, SQ Mark and ESG certifications — the quality, environmental and ethical commitments behind our manufacturing.'
-  );
 
   return (
     <>

@@ -1,6 +1,5 @@
 import { CTA, Compliance, Download, PageHead, Reveal, Section, SectionHead } from '../components/ui';
 import { DOC_BASE, policyCount, policyGroups, sustainabilityReport } from '../data/site';
-import usePageMeta from '../hooks/usePageMeta';
 
 const PILLARS = [
   ['Environment', 'Environment, biodiversity, waste and wastewater policies under an ISO 14001:2015 management system.'],
@@ -12,10 +11,6 @@ const PILLARS = [
 const docUrl = (file) => DOC_BASE + encodeURI(file);
 
 export default function Sustainability() {
-  usePageMeta(
-    'Sustainability & Policies — GRG Polydynamics',
-    'Published policies covering labour and human rights, health and safety, governance and environmental management — plus the Sustainability Report 2024–2025.'
-  );
 
   return (
     <>

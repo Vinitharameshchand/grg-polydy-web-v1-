@@ -2,7 +2,6 @@ import { CTA, PageHead, Reveal, Section, SectionHead } from '../components/ui';
 import Gallery from '../components/Gallery';
 import Img from '../components/Img';
 import { productShots } from '../data/site';
-import usePageMeta from '../hooks/usePageMeta';
 
 const FINISHES = [
   ['Moulded', 'Precision injection moulded in engineering-grade polymers, to drawing.'],
@@ -12,10 +11,6 @@ const FINISHES = [
 ];
 
 export default function Products() {
-  usePageMeta(
-    'Products — GRG Polydynamics',
-    'Precision moulded components: structural mouldings, appearance-critical trim, painted and chrome-plated parts for automotive, electrical, machine and consumer applications.'
-  );
 
   return (
     <>

@@ -20,7 +20,7 @@ const DIST = join(ROOT, 'dist');
 const SITE = process.env.SITE_URL || 'https://grgpolydynamics.com';
 
 /* pathToFileURL: on Windows a bare absolute path is rejected by the ESM loader. */
-const { render, routes } = await import(pathToFileURL(join(DIST, 'server', 'entry-server.js')).href);
+const { render, routes, notFoundMeta } = await import(pathToFileURL(join(DIST, 'server', 'entry-server.js')).href);
 
 const template = await readFile(join(DIST, 'index.html'), 'utf8');
 
@@ -120,10 +120,7 @@ for (const route of routes) {
 const notFound = page(
   {
     path: '/404',
-    meta: {
-      title: 'Page not found — GRG Polydynamics',
-      description: 'The page you requested does not exist.'
-    }
+    meta: notFoundMeta
   },
   render('/__not_found__')
 );

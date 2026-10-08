@@ -1,7 +1,6 @@
 import { CTA, PageHead, Reveal, Section, SectionHead, Split } from '../components/ui';
 import { SectionNav } from '../components/scroll';
 import { industries } from '../data/site';
-import usePageMeta from '../hooks/usePageMeta';
 
 const COMMON = [
   ['Documented process', 'Every part number runs against a released process sheet and control plan.'],
@@ -10,10 +9,6 @@ const COMMON = [
 ];
 
 export default function Industries() {
-  usePageMeta(
-    'Industries — GRG Polydynamics',
-    'Automotive, electrical and electronics, industrial machine and consumer product customers served with precision plastic injection moulded components.'
-  );
 
   return (
     <>

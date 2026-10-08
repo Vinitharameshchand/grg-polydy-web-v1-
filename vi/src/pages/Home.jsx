@@ -14,11 +14,12 @@ import {
 import Gallery from '../components/Gallery';
 import Img from '../components/Img';
 import Tilt from '../components/Tilt';
+import Hero3D from '../components/Hero3D';
+import Process3D from '../components/Process3D';
 import { SplitText } from '../components/AnimText';
 import { ScrollCue } from '../components/scroll';
 import { useScrollShift } from '../hooks/useScroll';
 import { certifications, industries, productShots, services, stats } from '../data/site';
-import usePageMeta from '../hooks/usePageMeta';
 
 const TICKER = [
   'IATF 16949 certified',
@@ -31,10 +32,6 @@ const TICKER = [
 ];
 
 export default function Home() {
-  usePageMeta(
-    'GRG Polydynamics — Precision Plastic Injection Moulding, Chennai',
-    'Precision, high-quality plastic injection moulded components for automotive, electrical, machine and consumer product customers. IATF 16949 and ISO 14001:2015 certified.'
-  );
 
   const parallaxRef = useRef(null);
   useParallax(parallaxRef, 0.08, 40); /* stays inside the 9% bleed of the parallax layer */
@@ -50,7 +47,7 @@ export default function Home() {
   return (
     <>
       {/* ---------------- hero ---------------- */}
-      <section className="hero hero--dark">
+      <section className="hero hero--dark hero--3d">
         {/* Photograph behind the type, drifting slower than the page. */}
         <div className="hero__media" ref={parallaxRef} aria-hidden="true">
           <Img
@@ -67,6 +64,8 @@ export default function Home() {
           <span className="hero__glow hero__glow--warm" />
           <span className="hero__glow hero__glow--cool" />
         </span>
+        {/* Injection mould in WebGL; loads after first paint. */}
+        <Hero3D />
 
         <div className="wrap hero__inner">
           <div className="hero__copy" ref={copyRef}>
@@ -137,6 +136,9 @@ export default function Home() {
           </Reveal>
         </div>
       </Section>
+
+      {/* ---------------- process, in 3D ---------------- */}
+      <Process3D />
 
       {/* ---------------- capabilities ---------------- */}
       <Section dark id="what-we-offer">

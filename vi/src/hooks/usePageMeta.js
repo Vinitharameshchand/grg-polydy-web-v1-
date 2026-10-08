@@ -1,22 +1,22 @@
 import { useEffect } from 'react';
+import { metaFor } from '../data/meta';
 
 /**
- * Sets the document title and meta description per route.
- * Client-side only — for crawler-visible metadata this site would need
- * prerendering (see README).
+ * Keeps the document title and meta description in step with client-side
+ * navigation. Values come from data/meta.js — the same source the prerender
+ * step bakes into each HTML file — so hydration never changes them.
  */
-export default function usePageMeta(title, description) {
+export default function usePageMeta(pathname) {
   useEffect(() => {
-    if (title) document.title = title;
+    const { title, description } = metaFor(pathname);
+    document.title = title;
 
-    if (description) {
-      let tag = document.querySelector('meta[name="description"]');
-      if (!tag) {
-        tag = document.createElement('meta');
-        tag.setAttribute('name', 'description');
-        document.head.appendChild(tag);
-      }
-      tag.setAttribute('content', description);
+    let tag = document.querySelector('meta[name="description"]');
+    if (!tag) {
+      tag = document.createElement('meta');
+      tag.setAttribute('name', 'description');
+      document.head.appendChild(tag);
     }
-  }, [title, description]);
+    tag.setAttribute('content', description);
+  }, [pathname]);
 }

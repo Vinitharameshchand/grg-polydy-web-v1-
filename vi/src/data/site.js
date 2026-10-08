@@ -247,12 +247,13 @@ export const npdStages = [
 ];
 
 /**
- * Policy library. Documents are served from the existing site today.
- * After migration, copy the PDFs locally and set DOC_BASE to './docs/'.
- * `false` as the third element = PDF not currently uploaded (404s today),
- * rendered as "On request" rather than a dead link.
+ * Policy library. PDFs are self-hosted in public/docs/ so they keep working
+ * when grgpolydynamics.com is repointed at this site.
+ * `false` as the third element = PDF not yet supplied (it 404ed on the old
+ * site), rendered as "On request" rather than a dead link. To publish one,
+ * add the file to public/docs/ under the name given here and drop the flag.
  */
-export const DOC_BASE = 'https://grgpolydynamics.com/';
+export const DOC_BASE = '/docs/';
 
 export const policyGroups = [
   {
@@ -260,20 +261,20 @@ export const policyGroups = [
     title: 'Labour & Human Rights',
     note: 'How people are hired, paid, protected and heard.',
     docs: [
-      ['Child Labour Policy', 'Policy/3.1.1.Child Labour Policy.pdf'],
-      ['Forced Labour Policy', 'Policy/3.1.3.Forced Labour Policy.pdf'],
-      ['Anti-Harassment Policy', 'Policy/3.1.5.Anti-Harassment Policy.pdf'],
-      ['POSH Policy', 'Policy/3.1.6.POSH Policy.pdf'],
-      ['Ethical Hiring Policy', 'Policy/3.1.13.Ethical Hiring Policy.pdf'],
-      ['Recruitment Policy', 'Policy/3.6.1.Recruitment Policy.pdf'],
-      ['Company HR Policy', 'Policy/3.2.1.Company HR Policy.pdf'],
-      ['Grievance Handling Policy', 'Policy/3.4.1.Grievance Handling Policy.pdf'],
-      ['Wage Policy', 'Policy/Wage_Policy_GRG_Polydynamic.pdf'],
-      ['Wage Equality Policy', 'Policy/3.7.4.wage Equality Policy.pdf'],
-      ['Employee Privacy Policy', 'Policy/3.9.4 Employee Privacy Policy.pdf'],
-      ['Parental Leave Policy', 'Policy/3.14.3.Parental Leave Policy.pdf'],
-      ['Maternity Policy', 'Policy/GRG_Maternity_Policy.pdf'],
-      ['Remote Working Policy', 'Policy/GRG_Remote_Working_Policy.pdf']
+      ['Child Labour Policy', 'child-labour-policy.pdf'],
+      ['Forced Labour Policy', 'forced-labour-policy.pdf'],
+      ['Anti-Harassment Policy', 'anti-harassment-policy.pdf'],
+      ['POSH Policy', 'posh-policy.pdf'],
+      ['Ethical Hiring Policy', 'ethical-hiring-policy.pdf'],
+      ['Recruitment Policy', 'recruitment-policy.pdf'],
+      ['Company HR Policy', 'company-hr-policy.pdf'],
+      ['Grievance Handling Policy', 'grievance-handling-policy.pdf'],
+      ['Wage Policy', 'wage-policy.pdf'],
+      ['Wage Equality Policy', 'wage-equality-policy.pdf'],
+      ['Employee Privacy Policy', 'employee-privacy-policy.pdf'],
+      ['Parental Leave Policy', 'parental-leave-policy.pdf'],
+      ['Maternity Policy', 'maternity-policy.pdf'],
+      ['Remote Working Policy', 'remote-working-policy.pdf']
     ]
   },
   {
@@ -281,8 +282,8 @@ export const policyGroups = [
     title: 'Health & Safety',
     note: 'Occupational safety on the shop floor and across the site.',
     docs: [
-      ['Health and Safety Policy', 'Policy/GRG_Health_and_Safety_Policy.pdf'],
-      ['Occupational Health and Safety Policy', 'Policy/Occupational Health and Safety Policy.pdf', false]
+      ['Health and Safety Policy', 'health-and-safety-policy.pdf'],
+      ['Occupational Health and Safety Policy', 'occupational-health-and-safety-policy.pdf', false]
     ]
   },
   {
@@ -290,9 +291,9 @@ export const policyGroups = [
     title: 'Governance & Ethics',
     note: 'How we conduct business and handle disclosure.',
     docs: [
-      ['Ethics Policy', 'Policy/GRG_Ethics_Policy.pdf'],
-      ['Gift and Hospitality Policy', 'Policy/GRG_Gift_and_Hospitality_Policy.pdf'],
-      ['Whistleblower Policy', 'Policy/GRG_Whistleblower_Policy.pdf']
+      ['Ethics Policy', 'ethics-policy.pdf'],
+      ['Gift and Hospitality Policy', 'gift-and-hospitality-policy.pdf'],
+      ['Whistleblower Policy', 'whistleblower-policy.pdf']
     ]
   },
   {
@@ -300,25 +301,25 @@ export const policyGroups = [
     title: 'Environment, Energy & Waste',
     note: 'The ISO 14001:2015 management system, documented.',
     docs: [
-      ['Environment Policy', 'EVS/Environment Policy.pdf'],
-      ['Environmental Roles and Responsibilities', 'EVS/Environmental Roles and Responsibilities.pdf'],
-      ['Biodiversity Policy', 'EVS/Biodiversity Policy.pdf'],
-      ['Energy Policy', 'EVS/Energy Policy.pdf'],
-      ['Energy Usage Policy', 'EVS/Energy_Usage_Policy_GRG_Polydynamic.pdf'],
-      ['GHG Reduction Goal Policy', 'EVS/GHG Reduction Goal Policy.pdf'],
-      ['Waste Management Policy', 'EVS/Waste Management Policy.pdf'],
-      ['Internal SOPs for Waste Handling', 'EVS/Interenal SOPs for Waste handling.pdf'],
-      ['Hazardous Waste Storage & Handling SOP', 'EVS/SOP_Hazardous_Waste_Storage_Handling_GRG_Polydynamic (1).pdf'],
-      ['Wastewater Management Plan – SOP', 'EVS/Wastewater Management Plan – SOP.pdf', false],
-      ['Water Management Policy', 'EVS/Water Management Policy.pdf'],
-      ['Water Usage Policy', 'EVS/Water Usage Policy.pdf']
+      ['Environment Policy', 'environment-policy.pdf'],
+      ['Environmental Roles and Responsibilities', 'environmental-roles-and-responsibilities.pdf'],
+      ['Biodiversity Policy', 'biodiversity-policy.pdf'],
+      ['Energy Policy', 'energy-policy.pdf'],
+      ['Energy Usage Policy', 'energy-usage-policy.pdf'],
+      ['GHG Reduction Goal Policy', 'ghg-reduction-goal-policy.pdf'],
+      ['Waste Management Policy', 'waste-management-policy.pdf'],
+      ['Internal SOPs for Waste Handling', 'internal-sops-for-waste-handling.pdf'],
+      ['Hazardous Waste Storage & Handling SOP', 'hazardous-waste-storage-and-handling-sop.pdf'],
+      ['Wastewater Management Plan – SOP', 'wastewater-management-plan-sop.pdf', false],
+      ['Water Management Policy', 'water-management-policy.pdf'],
+      ['Water Usage Policy', 'water-usage-policy.pdf']
     ]
   }
 ];
 
 export const sustainabilityReport = [
   'Sustainability Report 2024–2025',
-  'Reports/SUSTAINABILITY-REPORT-2024–2025.pdf'
+  'sustainability-report-2024-2025.pdf'
 ];
 
 export const policyCount = policyGroups.reduce((n, g) => n + g.docs.length, 0);

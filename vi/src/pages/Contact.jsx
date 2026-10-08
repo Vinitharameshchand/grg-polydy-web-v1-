@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Arrow, PageHead, Reveal, Section } from '../components/ui';
 import { company } from '../data/site';
-import usePageMeta from '../hooks/usePageMeta';
 
 const INTERESTS = [
   'Plastic injection moulding',
@@ -14,28 +13,56 @@ const INTERESTS = [
   'Other'
 ];
 
+/* Submissions are emailed by Web3Forms (web3forms.com). The access key is
+   public by design — it can only send to the inbox it was created for — and
+   is read from VITE_WEB3FORMS_KEY at build time (see .env.example). */
+const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
+const WEB3FORMS_KEY = import.meta.env.VITE_WEB3FORMS_KEY || '';
+
 const INDUSTRIES = ['Automotive', 'Electrical & electronics', 'Industrial & machine', 'Consumer products', 'Other'];
 
 export default function Contact() {
-  usePageMeta(
-    'Contact — GRG Polydynamics Private Limited',
-    'Contact GRG Polydynamics at Vallakottai, Sriperumbudur, Chennai 631604 for injection moulding, mould making, metal casting, tooling transfer and NPD enquiries.'
-  );
 
-  const [status, setStatus] = useState('');
+  /* { kind: 'sending' | 'sent' | 'error' | 'unconfigured', name } */
+  const [status, setStatus] = useState(null);
+  const sending = status?.kind === 'sending';
 
-  function onSubmit(e) {
+  async function onSubmit(e) {
     e.preventDefault();
     const form = e.currentTarget;
-    if (!form.reportValidity()) return;
-    const data = new FormData(form);
-    const first = String(data.get('name') || '').split(' ')[0];
-    setStatus(
-      `Thank you${first ? ', ' + first : ''}. Your enquiry has been recorded. Our team will respond within 48 business hours.`
-    );
-    form.reset();
-    /* Wire to a real endpoint here, e.g.
-       fetch('/api/enquiry', { method: 'POST', body: data }) */
+    if (sending || !form.reportValidity()) return;
+    const data = Object.fromEntries(new FormData(form));
+    const first = String(data.name || '').trim().split(' ')[0];
+
+    /* Honeypot: real visitors never see or tick this box. */
+    if (data.botcheck) return;
+    delete data.botcheck;
+
+    if (!WEB3FORMS_KEY) {
+      setStatus({ kind: 'unconfigured' });
+      return;
+    }
+
+    setStatus({ kind: 'sending' });
+    try {
+      const res = await fetch(WEB3FORMS_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_KEY,
+          subject: `Website enquiry: ${data.interest || 'General'}${data.company ? ' — ' + data.company : ''}`,
+          from_name: 'GRG Polydynamics website',
+          replyto: data.email,
+          ...data
+        })
+      });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok || !json.success) throw new Error(json.message || `HTTP ${res.status}`);
+      setStatus({ kind: 'sent', name: first });
+      form.reset();
+    } catch {
+      setStatus({ kind: 'error' });
+    }
   }
 
   return (
@@ -157,8 +184,11 @@ export default function Contact() {
                 />
               </div>
 
-              <button className="btn btn--solid" type="submit" style={{ width: '100%' }}>
-                Send enquiry
+              {/* Honeypot for bots; hidden from people and assistive tech. */}
+              <input type="checkbox" name="botcheck" className="hp" tabIndex={-1} autoComplete="off" aria-hidden="true" />
+
+              <button className="btn btn--solid" type="submit" style={{ width: '100%' }} disabled={sending} aria-busy={sending}>
+                {sending ? 'Sending…' : 'Send enquiry'}
                 <Arrow />
               </button>
 
@@ -168,11 +198,23 @@ export default function Contact() {
                 as confidential.
               </p>
 
-              {status && (
-                <p className="form__status" role="status" aria-live="polite">
-                  {status}
-                </p>
-              )}
+              <div aria-live="polite">
+                {status?.kind === 'sent' && (
+                  <p className="form__status" role="status">
+                    Thank you{status.name ? ', ' + status.name : ''}. Your enquiry has been sent. Our team
+                    will respond within 48 business hours.
+                  </p>
+                )}
+                {(status?.kind === 'error' || status?.kind === 'unconfigured') && (
+                  <p className="form__status form__status--error" role="alert">
+                    {status.kind === 'error'
+                      ? 'Your enquiry could not be sent — please check your connection and try again, or '
+                      : 'The online form is not available right now. Please '}
+                    email us at <a href={`mailto:${company.email}`}>{company.email}</a>
+                    {status.kind === 'error' ? '.' : ' or call ' + company.phone + '.'}
+                  </p>
+                )}
+              </div>
             </form>
           </Reveal>
         </div>

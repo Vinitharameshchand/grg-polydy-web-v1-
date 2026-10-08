@@ -10,6 +10,8 @@ export default defineConfig({
     outDir: 'dist',
     assetsDir: 'assets',
     sourcemap: false,
+    /* three.js (~134 KB gzip) is lazy-loaded, never on the critical path. */
+    chunkSizeWarningLimit: 600,
     cssCodeSplit: false,
     rollupOptions: {
       output: {
@@ -17,6 +19,8 @@ export default defineConfig({
            invalidate it in visitors' caches. */
         manualChunks(id) {
           if (id.includes('node_modules')) {
+            /* three.js is only ever loaded on demand, in its own chunk. */
+            if (id.includes('/three/')) return 'three';
             if (id.includes('react-router') || id.includes('@remix-run')) return 'router';
             if (id.includes('react-dom') || id.includes('/react/') || id.includes('scheduler')) return 'react';
           }

@@ -11,15 +11,17 @@ Content sources:
 
 ## Commands
 
+The lockfile is `bun.lock`, so install with Bun; the scripts run under npm or Bun alike.
+
 ```bash
-npm install
-npm run dev          # dev server, http://localhost:5173
+bun install
+npm run dev          # dev server, http://localhost:5174
 
 npm run build        # client build -> SSR build -> prerender. Output: dist/
 npm run serve        # serve dist/ with the production security headers (8080)
 npm run audit:a11y   # static checks in Chrome: images, contrast, keyboard, routing
 npm run probe        # real-time checks over CDP: scroll animations, lightbox, scroll-spy, tilt
-npm run test:e2e     # Playwright: 40 live tests on desktop + phone (see Testing)
+npm run test:e2e     # Playwright: 48 live tests on desktop + phone (see Testing)
 npm run capture:3d   # Playwright: rest/hover sheet + pointer-sweep video of the 3D tilt
 
 npm run images       # regenerate responsive derivatives from public/images/*.jpg
@@ -36,10 +38,18 @@ real HTML file per route, then deletes `dist/server/`.
 files. `dist/404.html` handles unknown URLs.
 
 - **Vercel** — [vercel.json](vercel.json) sets `cleanUrls`, the build command and all headers.
+  The site lives in the `vi/` folder of the repository, so set the Vercel project's
+  **Root Directory** to `vi` (Project Settings → General). Vercel detects `bun.lock` and installs
+  with Bun.
 - **Netlify / Cloudflare Pages** — [public/_headers](public/_headers) is copied into `dist/`
   and applied automatically.
 - **Nginx / Apache** — neither file is read. Port the headers from `_headers` into the server
   config, or the CSP and cache policy will not be applied.
+
+**Contact form.** Enquiries are delivered by [Web3Forms](https://web3forms.com). Create a free
+access key for `vkumar@grgpolydynamics.com` and set it as `VITE_WEB3FORMS_KEY` in the host's
+environment variables (see [.env.example](.env.example)) before building. Without it the form
+tells visitors to email or call instead of pretending to send.
 
 Set the canonical origin with `SITE_URL=https://example.com npm run build` (defaults to
 `https://grgpolydynamics.com`). It drives canonical tags, Open Graph URLs and `sitemap.xml`.
@@ -53,7 +63,8 @@ vercel.json                 headers + clean URLs for Vercel
 src/
   main.jsx                  hydrates the prerendered markup (falls back to render in dev)
   entry-server.jsx          renderToString for the prerender step
-  App.jsx  routes.jsx       route table + per-route title/description
+  App.jsx  routes.jsx       route table
+  data/meta.js              per-route <title> + description (prerender AND runtime read this)
   data/site.js              ALL content: company facts, services, industries, NPD, policies
   data/images.json          generated manifest of image derivatives
   hooks/useScroll.js        ONE scroll listener + rAF loop shared by every effect
@@ -66,6 +77,12 @@ src/
     AnimText.jsx            SplitText / SplitChars / ScrollCopy text animation
     Tilt.jsx                pointer-tracked 3D tilt wrapper (inert on touch / reduced motion)
     Lightbox.jsx            accessible full-size image viewer
+    Hero3D.jsx              WebGL mould in the home masthead (lazy, decorative)
+    Process3D.jsx           scroll-driven "pellet to part" WebGL story on the home page
+  three/
+    kit.js                  renderer, materials, procedural mould / part / granules
+    heroScene.js            masthead scene: inject → open → eject → present, loops
+    processScene.js         story scene: camera path along the machine, posed by scroll
   styles/  global.css  scroll.css  hero.css  footer.css  text.css  wow.css  depth.css  gradients.css  fonts.css
 scripts/
   images.mjs                builds responsive derivatives + og-cover.jpg
@@ -78,7 +95,7 @@ public/
   images/                   originals (source of truth) + images/gen/ (derivatives)
   fonts/                    self-hosted Inter woff2
   _headers                  Netlify/Cloudflare header policy
-legacy-static/              the earlier hand-built version, kept for reference
+  docs/                     policy PDFs and the sustainability report, self-hosted
 ```
 
 **To change copy, edit [src/data/site.js](src/data/site.js).**
@@ -87,6 +104,7 @@ legacy-static/              the earlier hand-built version, kept for reference
 
 | Control | Where |
 | --- | --- |
+| CSP — `connect-src` allows only `self` and `https://api.web3forms.com` (the form) | `_headers`, `vercel.json`, `serve.mjs` |
 | CSP — `script-src 'self'`, no inline scripts, `object-src 'none'`, `frame-ancestors 'none'` | `_headers`, `vercel.json`, `serve.mjs` |
 | HSTS, 2 years, preload | `_headers`, `vercel.json` |
 | `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY` | all three |
@@ -221,6 +239,32 @@ of JavaScript for a rotating rectangle.
 Verified by `npm run probe`, which fires synthetic `pointermove` events at two corners of a card
 and reads the rotation back, then re-runs under emulated touch.
 
+## WebGL (`three.css`, `src/three/`)
+
+Two real 3D scenes on the home page, built with three.js from procedural geometry — no model
+files. Both depict a generic two-plate mould and a louvred grille moulding, not a specific
+customer part.
+
+| Scene | What it does |
+| --- | --- |
+| **Masthead mould** | The cavity glows as melt is injected, the tool opens, ejector pins push the part off the core, and the part floats forward and presents itself; a 9 s loop. The assembly turns toward the pointer. Desktop: right of the headline. Tablet/phone: its own band above the copy (space reserved in the prerendered markup, so nothing shifts). |
+| **From pellet to part** | A pinned, 520vh section. Scrolling drives a camera along the machine through five steps: granules into a cut-away hopper → heater bands and a turning screw melt them → the screw drives forward and the part fills inside a translucent fixed half → the tool opens and ejects → the part is scanned on an inspection bench with dimension lines. Every pose is a pure function of scroll position, so scrolling up plays it backwards. A side panel lists the five steps and opens the active one; on phones only the active step shows. |
+
+Cost and safety:
+
+- three.js is a separate ~134 KB (gzip) chunk, fetched **after** hydration (masthead on idle, story
+  when it is a screen away). The first paint, LCP image and prerendered HTML are unchanged.
+- Rendering stops when a canvas is off-screen or the tab is hidden. Pixel ratio is capped (1.5 on
+  phones, 1.75 desktop); phones get fewer granules.
+- `prefers-reduced-motion`: the masthead renders one still frame; the story becomes an ordinary
+  five-step list with no canvas.
+- No WebGL (old GPU, blocked): detected without a console error; the masthead stays the photograph
+  and the story becomes the list. Both fallbacks are covered by e2e tests.
+- The canvases are `aria-hidden` and `pointer-events: none`; all step copy is real text in the DOM.
+
+The step copy in `Process3D.jsx` is generic process description consistent with `site.js` —
+see client sign-off below.
+
 ## Testing
 
 Three layers, each catching what the others cannot:
@@ -230,6 +274,12 @@ Three layers, each catching what the others cannot:
 | `npm run audit:a11y` | headless Chrome, virtual time | contrast, `inert`, headings, broken images, anchor routing |
 | `npm run probe` | real-time Chrome over the DevTools Protocol | anything rAF-driven: scroll progress, parallax, process track, text lighting, tilt |
 | `npm run test:e2e` | Playwright, desktop + Pixel 7 | real mouse and keyboard, every route, 404, form, lightbox, drawer, scroll-spy, 3D tilt, touch tilt; fails on any console error or failed request |
+
+The e2e suite runs in one worker and asks Chromium for the real GPU (ANGLE/D3D11 on Windows) —
+headless Chromium otherwise renders WebGL in software, which is slow enough to time tests out.
+The live 3D tests are in `tests/three.spec.mjs`, which also turns off video and trace capture for
+the same reason. Build with any `VITE_WEB3FORMS_KEY` (e.g. `e2e`); the form endpoint is mocked,
+so no email is sent.
 
 Run e2e against `node scripts/serve.mjs 8092` (clean URLs + real `404.html`), with
 `E2E_ORIGIN=http://127.0.0.1:8092`. A plain directory server redirects `/route` to `/route/`
@@ -268,18 +318,15 @@ and reporting the worst — `color: transparent` would otherwise read as black a
 
 ## Known constraints
 
-1. **The enquiry form does not send anything.** It validates and shows a confirmation, but
-   makes no network request. Wire `onSubmit` in [src/pages/Contact.jsx](src/pages/Contact.jsx)
-   to an endpoint. If you use a third-party form service, add its origin to `connect-src` in
-   the CSP or the request will be blocked.
-2. **Two policy PDFs 404 on GRG's server** — `Occupational Health and Safety Policy` and
-   `Wastewater Management Plan – SOP`. They render as "On request". Upload them and remove the
-   `false` flag on those entries in `site.js`.
-3. **Policy PDFs are hotlinked** to `grgpolydynamics.com`. They break the moment that host is
-   repointed at this site. Move them into `public/docs/` and set `DOC_BASE = '/docs/'`.
-4. **The logo is a placeholder** monogram, in `Layout.jsx` and `public/favicon.svg`.
-5. **`legacy-static/` is not deployed** but is still in the repo; delete it when you no longer
-   need the comparison.
+1. **The contact form needs its Web3Forms key** in production (see Deploying). Until then it
+   shows the email address and phone number instead of sending.
+2. **Two policy PDFs were never supplied** — `Occupational Health and Safety Policy` and
+   `Wastewater Management Plan – SOP` (both 404ed on the old site). They render as "On request".
+   Add them to `public/docs/` under the file names in `site.js` and remove the `false` flag.
+3. **The logo is a placeholder** monogram, in `Layout.jsx` and `public/favicon.svg`.
+4. `npm run audit:a11y` reports same-page anchor scrolling as wrong because it runs under a
+   virtual-time budget in which smooth scrolling never advances; the real-time e2e test of the
+   same behaviour passes.
 
 ## Content requiring client sign-off
 
@@ -290,7 +337,8 @@ certifications, all ten NPD activities.
 **Written by me, not sourced — GRG must review before publishing:** the operating-model
 section on About, the gate deliverables and "what we need to start" on Development, the
 process-control and commitments tables, the per-sector descriptions on Industries, and the
-quality-lab paragraph.
+quality-lab paragraph, and the five "From pellet to part" step descriptions in
+`src/components/Process3D.jsx`.
 
 **Photography captions are deliberately non-asserting.** Nobody has confirmed what the
 photographed parts are, who they are for, or which sector they ship into, so captions and alt

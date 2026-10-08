@@ -1,7 +1,6 @@
 import { CTA, PageHead, Reveal, Section, SectionHead, Split } from '../components/ui';
 import { ProcessTrack } from '../components/scroll';
 import { npdStages } from '../data/site';
-import usePageMeta from '../hooks/usePageMeta';
 
 const NEEDS = [
   ['Part drawing', '2D drawing or 3D model with tolerances and critical characteristics identified.'],
@@ -21,10 +20,6 @@ const DELIVERABLES = [
 ];
 
 export default function NPD() {
-  usePageMeta(
-    'Product Development — GRG Polydynamics',
-    'A dedicated NPD team supporting complete product development and production readiness: feasibility, DFM, tooling, validation, PPAP and mass production launch.'
-  );
 
   return (
     <>

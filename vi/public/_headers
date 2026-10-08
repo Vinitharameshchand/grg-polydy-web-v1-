@@ -7,7 +7,7 @@
   # Only this origin may load scripts/styles. 'unsafe-inline' on style-src is
   # required because React sets inline style attributes (e.g. --p, --d, --i).
   # No 'unsafe-inline' on script-src: all JS is external and hashed.
-  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-src https://www.google.com; form-action 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.web3forms.com; frame-src https://www.google.com; form-action 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests
   # Force HTTPS for two years, including subdomains.
   Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
   # Do not let the browser guess a MIME type it was not given.

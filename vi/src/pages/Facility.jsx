@@ -1,13 +1,8 @@
 import { CTA, PageHead, Reveal, Section, SectionHead, Split } from '../components/ui';
 import Gallery from '../components/Gallery';
 import { facilityShots } from '../data/site';
-import usePageMeta from '../hooks/usePageMeta';
 
 export default function Facility() {
-  usePageMeta(
-    'Facility — GRG Polydynamics',
-    'Inside the GRG Polydynamics plant at Vallakottai, Sriperumbudur: production floor, injection moulding machines, tool room, quality laboratory and engineering office.'
-  );
 
   return (
     <>

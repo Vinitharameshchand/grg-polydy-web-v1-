@@ -1,9 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Arrow, Section } from '../components/ui';
-import usePageMeta from '../hooks/usePageMeta';
 
 export default function NotFound() {
-  usePageMeta('Page not found — GRG Polydynamics');
 
   return (
     <Section>

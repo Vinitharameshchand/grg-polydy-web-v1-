@@ -19,6 +19,10 @@ export function SectionNav({ items, label = 'On this page' }) {
     const header = document.querySelector('.header');
     const offset = (header ? header.getBoundingClientRect().height : 0) + 8;
     window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - offset, behavior: 'smooth' });
+    /* Keep the address bar shareable as a deep link. replaceState (not the
+       router) so the hash scroll manager does not scroll a second time, and
+       the router's own history state is preserved. */
+    window.history.replaceState(window.history.state, '', `#${id}`);
   };
 
   return (

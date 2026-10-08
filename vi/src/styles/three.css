@@ -1,0 +1,314 @@
+/* ==========================================================================
+   WebGL layers: the masthead mould (Hero3D) and the pellet-to-part story
+   (Process3D). Both canvases are decorative and fade in on their first
+   rendered frame; until then — or forever, without WebGL — the page reads
+   exactly as it did without them.
+   ========================================================================== */
+
+/* ------------------------------------------------------------ masthead */
+.hero__3d {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.2s var(--ease);
+}
+.hero__3d.is-ready {
+  opacity: 1;
+}
+
+/* With a 3D subject on the right, the photograph becomes atmosphere: deepen
+   the right half of the scrim so the steel reads against it. */
+.hero--3d .hero__scrim {
+  background:
+    radial-gradient(60% 70% at 72% 42%, rgba(19, 43, 87, 0.35), transparent 70%),
+    linear-gradient(
+      90deg,
+      rgba(6, 16, 39, 0.96) 0%,
+      rgba(6, 16, 39, 0.9) 38%,
+      rgba(6, 16, 39, 0.74) 68%,
+      rgba(6, 16, 39, 0.8) 100%
+    ),
+    linear-gradient(180deg, rgba(6, 16, 39, 0.35) 0%, transparent 30%, rgba(6, 16, 39, 0.72) 100%);
+}
+
+/* The location tag sat where the mould now stands; the eyebrow above the
+   headline already carries the location. */
+@media (min-width: 960px) {
+  .hero--3d .hero__tag {
+    display: none;
+  }
+}
+
+/* Stacked masthead (tablet / phone): the canvas becomes its own band above
+   the copy. Space is reserved in the prerendered markup, so the page does
+   not shift when the scene arrives. */
+@media (max-width: 959px) {
+  .hero--3d .hero__3d {
+    inset: 0 0 auto;
+    height: var(--hero3d-h);
+  }
+  .hero--3d {
+    --hero3d-h: clamp(230px, 34vh, 330px);
+  }
+  .hero--3d .hero__inner {
+    padding-top: calc(var(--hero3d-h) - 8px);
+  }
+}
+
+/* ------------------------------------------------------- process story */
+.p3d {
+  position: relative;
+  height: 520vh;
+  background:
+    radial-gradient(70% 60% at 65% 35%, #17325e 0%, transparent 70%),
+    linear-gradient(180deg, #071531 0%, var(--brand) 40%, #08172f 100%);
+  color: var(--on-brand);
+}
+.p3d__sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+}
+.p3d__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  opacity: 0;
+  transition: opacity 0.9s var(--ease);
+}
+.p3d--live .p3d__canvas {
+  opacity: 1;
+}
+
+.p3d__overlay {
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+.p3d__panel {
+  pointer-events: auto;
+  width: min(390px, 100%);
+  padding: 30px 28px 26px;
+  background: rgba(6, 16, 39, 0.58);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  box-shadow: 0 30px 80px rgba(3, 9, 24, 0.4);
+}
+.p3d .label {
+  color: var(--accent);
+}
+.p3d .label--bar::before {
+  background: var(--accent);
+}
+.p3d .h2 {
+  color: #fff;
+  margin: 14px 0 22px;
+  font-size: clamp(26px, 2.6vw, 36px);
+}
+
+.p3d__steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.p3d__steps li {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  gap: 4px;
+  padding: 11px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  transition: opacity 0.4s var(--ease);
+  opacity: 0.5;
+}
+.p3d__steps li.is-done {
+  opacity: 0.72;
+}
+.p3d__steps li.is-active {
+  opacity: 1;
+}
+.p3d__num {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--on-brand-dim);
+  padding-top: 3px;
+  font-variant-numeric: tabular-nums;
+}
+.is-active .p3d__num,
+.is-done .p3d__num {
+  color: var(--accent);
+}
+.p3d__title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+}
+/* Collapsed by default; the active step opens (grid 0fr → 1fr animates height). */
+.p3d__body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.5s var(--ease-out);
+}
+.p3d__body > p {
+  overflow: hidden;
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--on-brand);
+}
+.is-active .p3d__body {
+  grid-template-rows: 1fr;
+}
+.is-active .p3d__body > p {
+  padding-top: 6px;
+}
+
+.p3d__rail {
+  margin-top: 14px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+.p3d__rail span {
+  display: block;
+  height: 100%;
+  background: var(--grad-amber, var(--accent));
+  transform-origin: left;
+  transform: scaleX(var(--p, 0));
+}
+
+.p3d__hint {
+  position: absolute;
+  right: var(--gutter);
+  bottom: 28px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--on-brand-dim);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.p3d__hint::after {
+  content: "";
+  width: 1px;
+  height: 28px;
+  background: linear-gradient(var(--accent), transparent);
+  animation: p3d-hint 1.8s var(--ease) infinite;
+  transform-origin: top;
+}
+@keyframes p3d-hint {
+  0% { transform: scaleY(0); }
+  60% { transform: scaleY(1); }
+  100% { transform: scaleY(1); opacity: 0; }
+}
+
+/* Phone / portrait: subject in the upper part, the active step at the bottom. */
+@media (max-width: 760px), (max-aspect-ratio: 1/1) {
+  .p3d {
+    height: 480vh;
+  }
+  .p3d__overlay {
+    align-items: flex-end;
+    padding-bottom: 20px;
+  }
+  .p3d__panel {
+    /* Clear the floating back-to-top / WhatsApp buttons on the right. */
+    width: calc(100% - 52px);
+    padding: 20px 18px 16px;
+  }
+  .p3d .h2 {
+    font-size: 22px;
+    margin: 10px 0 8px;
+  }
+  /* Only the active step is shown; the others stay in the accessibility tree. */
+  .p3d__steps li:not(.is-active) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .p3d__steps li {
+    border-top: 0;
+    padding: 0;
+  }
+  .p3d__hint {
+    display: none;
+  }
+}
+
+/* Static fallback (reduced motion, no WebGL): an ordinary dark section with
+   every step open. */
+.p3d--static {
+  height: auto;
+}
+.p3d--static .p3d__sticky {
+  position: relative;
+  height: auto;
+  overflow: visible;
+}
+.p3d--static .p3d__canvas,
+.p3d--static .p3d__hint,
+.p3d--static .p3d__rail {
+  display: none;
+}
+.p3d--static .p3d__overlay {
+  height: auto;
+  display: block;
+  padding-top: clamp(64px, 9vw, 120px);
+  padding-bottom: clamp(64px, 9vw, 120px);
+}
+.p3d--static .p3d__panel {
+  width: 100%;
+  max-width: 760px;
+  background: none;
+  border: 0;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  padding: 0;
+}
+.p3d--static .p3d__steps li {
+  position: static;
+  width: auto;
+  height: auto;
+  clip: auto;
+  clip-path: none;
+  white-space: normal;
+  opacity: 1;
+  padding: 14px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+.p3d--static .p3d__body {
+  grid-template-rows: 1fr;
+}
+.p3d--static .p3d__body > p {
+  padding-top: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__3d,
+  .p3d__canvas {
+    transition: none;
+  }
+  .p3d__hint::after {
+    animation: none;
+  }
+}
