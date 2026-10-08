@@ -33,7 +33,7 @@ export default function Capabilities() {
       {/* detail sections */}
       {all.map((s, i) => (
         <Section key={s.id} id={s.id} tint={i % 2 === 1}>
-          <Split image={s.image} alt={s.alt} caption={s.title} reverse={i % 2 === 1}>
+          <Split image={s.image} alt={s.alt} reverse={i % 2 === 1}>
             <span className="label">Capability {String(i + 1).padStart(2, '0')}</span>
             <h2 className="h2">{s.title}</h2>
             <p className="body-lg">{s.text}</p>

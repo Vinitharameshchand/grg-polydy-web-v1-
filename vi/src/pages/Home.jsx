@@ -187,7 +187,8 @@ export default function Home() {
         <Gallery
           items={productShots.slice(0, 6).map(([name, title, kind]) => ({
             name,
-            caption: `${title} — ${kind}`,
+            caption: title,
+            meta: kind,
             alt: title
           }))}
         />

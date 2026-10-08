@@ -9,7 +9,7 @@ import { Reveal } from './ui';
  * Each tile is a real <button> so it is reachable and operable by keyboard,
  * announced as "View <caption>, opens image viewer".
  *
- * items: [{ name, caption, alt?, tall? }]
+ * items: [{ name, caption, meta?, alt?, tall? }]
  */
 export default function Gallery({ items, sizes = 'gallery' }) {
   const { index, open, close, step } = useLightbox(items);
@@ -30,7 +30,7 @@ export default function Gallery({ items, sizes = 'gallery' }) {
               type="button"
               className="shot__btn"
               onClick={(e) => open(i, e.currentTarget)}
-              aria-label={`View ${item.caption} — opens image viewer`}
+              aria-label={`View ${item.caption}${item.meta ? ', ' + item.meta : ''} — opens image viewer`}
             >
               <Img name={item.name} alt={item.alt || item.caption} sizes={sizes} />
               <span className="shot__zoom" aria-hidden="true">
@@ -41,7 +41,10 @@ export default function Gallery({ items, sizes = 'gallery' }) {
               </span>
             </button>
             </Tilt>
-            <figcaption>{item.caption}</figcaption>
+            <figcaption>
+              <span className="shot__title">{item.caption}</span>
+              {item.meta && <span className="shot__meta">{item.meta}</span>}
+            </figcaption>
           </Reveal>
         ))}
       </div>

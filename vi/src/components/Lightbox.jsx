@@ -101,7 +101,7 @@ export default function Lightbox({ items, index, onClose, onStep }) {
             />
           </picture>
           <figcaption>
-            <span>{item.caption}</span>
+            <span>{item.caption}{item.meta ? ` — ${item.meta}` : ''}</span>
             <span className="lb__count">
               {index + 1} / {items.length}
             </span>

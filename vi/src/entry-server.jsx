@@ -13,6 +13,7 @@ import './styles/depth.css';
 import './styles/gradients.css';
 import './styles/certstrip.css';
 import './styles/three.css';
+import './styles/polish.css';
 
 /** Renders one route to an HTML string for the prerender step. */
 export function render(url) {

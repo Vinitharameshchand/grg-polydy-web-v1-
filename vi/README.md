@@ -84,6 +84,7 @@ src/
     heroScene.js            masthead scene: inject → open → eject → present, loops
     processScene.js         story scene: camera path along the machine, posed by scroll
   styles/  global.css  scroll.css  hero.css  footer.css  text.css  wow.css  depth.css  gradients.css  fonts.css
+           three.css (WebGL layers)  polish.css (loaded last: captions, eyebrows, list markers, phone fixes)
 scripts/
   images.mjs                builds responsive derivatives + og-cover.jpg
   fetch-fonts.mjs           downloads and self-hosts Inter

@@ -24,7 +24,8 @@ export default function Products() {
         <Gallery
           items={productShots.map(([name, title, kind]) => ({
             name,
-            caption: `${title} — ${kind}`,
+            caption: title,
+            meta: kind,
             alt: title
           }))}
         />

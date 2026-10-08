@@ -22,7 +22,7 @@ export default function Industries() {
 
       {industries.map((ind, i) => (
         <Section key={ind.id} id={ind.id} tint={i % 2 === 1}>
-          <Split image={ind.image} alt={ind.alt} caption={ind.title} reverse={i % 2 === 1}>
+          <Split image={ind.image} alt={ind.alt} reverse={i % 2 === 1}>
             <span className="label">Sector {String(i + 1).padStart(2, '0')}</span>
             <h2 className="h2">{ind.title}</h2>
             <p className="body-lg">{ind.text}</p>

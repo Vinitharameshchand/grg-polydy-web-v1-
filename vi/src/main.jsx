@@ -14,6 +14,7 @@ import './styles/depth.css';
 import './styles/gradients.css';
 import './styles/certstrip.css';
 import './styles/three.css';
+import './styles/polish.css';
 
 const root = document.getElementById('root');
 

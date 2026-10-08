@@ -210,12 +210,8 @@ export function SectionHead({ label, title, num, children }) {
      stacking a block transform on top of that reads as two separate moves. */
   return (
     <div className="cols" style={{ marginBottom: 'clamp(32px,4.5vw,64px)' }}>
-      {num && (
-        <span className="cols__num" aria-hidden="true">
-          {num}
-        </span>
-      )}
       <Reveal as="span" className="label label--bar" variant="fade">
+        {num && <span className="label__num">{num}</span>}
         {label}
       </Reveal>
       <div className="stack">
