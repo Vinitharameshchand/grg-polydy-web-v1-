@@ -7,7 +7,13 @@ test.beforeEach(async ({ page }, info) => {
   info.errors = [];
   page.on('console', (m) => m.type() === 'error' && info.errors.push('console: ' + m.text()));
   page.on('pageerror', (e) => info.errors.push('pageerror: ' + e.message));
-  page.on('requestfailed', (r) => info.errors.push('request failed: ' + r.url()));
+  page.on('requestfailed', (r) => {
+    /* The Google map iframe is cancelled (ERR_ABORTED) whenever a test leaves
+       the contact page before it finishes loading — that is teardown, not a
+       defect. Any other failure, including a real map error, still counts. */
+    if (r.failure()?.errorText === 'net::ERR_ABORTED' && r.url().startsWith('https://www.google.com/maps')) return;
+    info.errors.push('request failed: ' + r.url());
+  });
   /* Subresources only: a test that navigates to a missing URL expects the
      document itself to be a 404. */
   page.on('response', (r) => r.status() >= 400 && r.request().resourceType() !== 'document' && info.errors.push(`HTTP ${r.status()} ${r.url()}`));
@@ -232,5 +238,24 @@ test.describe('scroll animation', () => {
     await page.waitForTimeout(400);
     const end = await read();
     expect(end).toBeGreaterThan(start + 0.3);
+  });
+});
+
+test.describe('responsive', () => {
+  test.use({ reducedMotion: 'reduce' });
+
+  test('no page scrolls sideways from 320px to tablet width', async ({ page }, info) => {
+    test.skip(info.project.name !== 'desktop', 'widths are set explicitly; one project is enough');
+    test.setTimeout(120_000);
+    const overflow = [];
+    for (const width of [320, 390, 768, 1024]) {
+      await page.setViewportSize({ width, height: 900 });
+      for (const route of ROUTES) {
+        await page.goto(route);
+        const extra = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
+        if (extra > 0) overflow.push(`${width}px ${route}: +${extra}px`);
+      }
+    }
+    expect(overflow).toEqual([]);
   });
 });

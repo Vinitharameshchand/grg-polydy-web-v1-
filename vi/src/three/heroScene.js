@@ -40,19 +40,37 @@ export function mountHero(canvas, { reduced = false, onReady } = {}) {
   shadow.position.y = -1.22;
   root.add(shadow);
 
-  let stacked = false;
+  /* Three framings, matching three.css:
+     wide   (≥960px, landscape) — subject right of the headline
+     tablet (640–959px)         — canvas spans the hero; subject sits in the
+                                  empty space beside the headline, sized in px
+     band   (<640px)            — canvas is its own band above the copy */
+  let mode = 'wide';
   function layout() {
     const w = canvas.clientWidth || 1;
     const h = canvas.clientHeight || 1;
     const aspect = w / h;
-    /* Wide masthead: subject sits right of the headline. Stacked (tablet and
-       phone): the canvas is its own band above the copy, subject centred. */
-    stacked = aspect < 1.25 || w < 960;
-    const viewH = stacked ? Math.max(4.6, 5.4 / aspect) : Math.max(5.9, 9.2 / aspect);
+    mode = w >= 960 && aspect >= 1.25 ? 'wide' : w >= 640 ? 'tablet' : 'band';
+    let viewH;
+    let offset;
+    if (mode === 'wide') {
+      viewH = Math.max(5.9, 9.2 / aspect);
+      offset = { x: 0.24, y: 0.16 };
+    } else if (mode === 'tablet') {
+      /* ~2.6 world units of tool + part shown at objPx pixels tall, centred
+         ~300px below the top of the hero, 72% across. */
+      const objPx = Math.min(300, w * 0.36);
+      viewH = (2.6 * h) / objPx;
+      offset = { x: 0.24, y: 0.5 - Math.min(300, h * 0.32) / h };
+    } else {
+      viewH = Math.max(3.5, 5.6 / aspect);
+      offset = { x: 0, y: 0 };
+    }
     const dist = viewH / 2 / Math.tan((camera.fov * Math.PI) / 360);
     camera.position.set(0, dist * 0.2, dist);
     camera.lookAt(0, 0.05, 0);
-    stage.resize(stacked ? { x: 0, y: 0 } : { x: 0.24, y: 0.16 });
+    camera.far = Math.max(100, dist * 3);
+    stage.resize(offset);
   }
   layout();
 
@@ -62,7 +80,7 @@ export function mountHero(canvas, { reduced = false, onReady } = {}) {
   const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   const onPointer = (e) => {
     const r = canvas.getBoundingClientRect();
-    aim.x = clamp(((e.clientX - (r.left + r.width * (stacked ? 0.5 : 0.7))) / r.width) * 2, -1, 1);
+    aim.x = clamp(((e.clientX - (r.left + r.width * (mode === 'band' ? 0.5 : 0.74))) / r.width) * 2, -1, 1);
     aim.y = clamp(((e.clientY - (r.top + r.height * 0.45)) / r.height) * 2, -1, 1);
   };
   if (fine && !reduced) window.addEventListener('pointermove', onPointer, { passive: true });

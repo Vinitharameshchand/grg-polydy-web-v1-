@@ -159,3 +159,96 @@
     gap: 10px;
   }
 }
+
+/* ==========================================================================
+   Responsive pass — from a sweep of every route at 320, 360, 390, 430, 768,
+   1024 and 1280px (no horizontal overflow found at any width; the fixes
+   below are touch targets, small type and the floating controls).
+   ========================================================================== */
+
+/* ------------------------------------------------------ touch targets */
+/* Comfortable ~44px hit areas on touch screens. Padding with an equal
+   negative margin grows the tappable box without moving any layout. */
+@media (pointer: coarse) {
+  .link {
+    min-height: 44px;
+  }
+  .crumbs a,
+  .footer__phone,
+  .footer__mail,
+  .info__item dd a,
+  .form__note a {
+    display: inline-block;
+    padding-block: 12px;
+    margin-block: -12px;
+  }
+  .brand,
+  .cue {
+    min-height: 44px;
+  }
+}
+
+/* ------------------------------------------------------- phone type */
+/* Uppercase microcopy was 9.5–11px; on a phone held at arm's length that
+   is below comfortable reading size. One step up, layout unchanged. */
+@media (max-width: 760px) {
+  .label,
+  .crumbs,
+  .feature__num,
+  .cert span,
+  .certstrip span,
+  .table th,
+  .field label,
+  .info__item dt,
+  .footer__h,
+  .hero__panel li > span,
+  .hero__meta li > span {
+    font-size: 12px;
+  }
+  .footer__badges li {
+    font-size: 11px;
+  }
+  .brand__sub {
+    font-size: 10px;
+  }
+}
+
+/* ------------------------------------------------ floating controls */
+/* Round, lifted buttons read as controls floating over the page rather
+   than squares stamped onto the text beneath them. */
+.wa,
+.totop {
+  border-radius: 50%;
+  box-shadow: 0 10px 28px rgba(6, 16, 39, 0.28);
+}
+.wa {
+  background: var(--brand);
+  width: 52px;
+  height: 52px;
+  /* Keeps the circle visible over the navy sections. */
+  border: 1px solid rgba(255, 255, 255, 0.22);
+}
+.wa:hover {
+  background: #1fa855; /* WhatsApp green on hover: the action is obvious */
+}
+.totop {
+  bottom: 86px;
+}
+@media (max-width: 600px) {
+  .wa {
+    right: 14px;
+    bottom: 14px;
+    width: 48px;
+    height: 48px;
+  }
+  .totop {
+    right: 16px;
+    bottom: 72px;
+    width: 44px;
+    height: 44px;
+  }
+  /* The last lines of the footer stay clear of the floating buttons. */
+  .footer__bottom {
+    padding-bottom: 76px;
+  }
+}

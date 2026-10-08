@@ -21,7 +21,7 @@ npm run build        # client build -> SSR build -> prerender. Output: dist/
 npm run serve        # serve dist/ with the production security headers (8080)
 npm run audit:a11y   # static checks in Chrome: images, contrast, keyboard, routing
 npm run probe        # real-time checks over CDP: scroll animations, lightbox, scroll-spy, tilt
-npm run test:e2e     # Playwright: 48 live tests on desktop + phone (see Testing)
+npm run test:e2e     # Playwright: 50 live tests on desktop + phone (see Testing)
 npm run capture:3d   # Playwright: rest/hover sheet + pointer-sweep video of the 3D tilt
 
 npm run images       # regenerate responsive derivatives from public/images/*.jpg
@@ -239,6 +239,21 @@ of JavaScript for a rotating rectangle.
 
 Verified by `npm run probe`, which fires synthetic `pointermove` events at two corners of a card
 and reads the rotation back, then re-runs under emulated touch.
+
+## Responsive
+
+Checked at 320, 360, 390, 430, 768, 1024 and 1280px on every route; an e2e test fails if any
+page scrolls sideways at 320, 390, 768 or 1024px.
+
+- **Touch targets** are ~44px on coarse pointers. Text links get a minimum height; inline
+  links (breadcrumbs, phone/email) use padding with an equal negative margin, so the hit area
+  grows without moving the layout.
+- **Phone type**: uppercase microcopy steps up from 10.5–11px to 12px under 760px.
+- **Floating buttons** (WhatsApp, back to top) are round and lifted, ringed so they stay visible
+  on navy, and the footer leaves room beneath them on phones.
+- **Sticky section nav** scrolls itself on narrow screens to keep the current section in view.
+- **Masthead 3D** has three framings: beside the headline (≥960px landscape), beside the
+  headline sized in pixels (tablets, 640–959px or portrait), and a band above the copy (<640px).
 
 ## WebGL (`three.css`, `src/three/`)
 

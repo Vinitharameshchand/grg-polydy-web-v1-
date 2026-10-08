@@ -329,7 +329,7 @@ export function mountProcess(canvas, { onReady } = {}) {
     /* Wide: copy panel on the left, subject right of centre.
        Narrow: copy at the bottom, subject in the upper part, pulled back. */
     frame = narrow
-      ? { offset: { x: 0, y: 0.17 }, zoom: clamp(1.05 / aspect, 1.2, 2.3) }
+      ? { offset: { x: 0, y: 0.17 }, zoom: clamp(1.25 / aspect, 1.35, 2.4) }
       : { offset: { x: w > 1100 ? 0.15 : 0.1, y: 0.02 }, zoom: aspect < 1.4 ? 1.2 : 1 };
     stage.resize(frame.offset);
   }

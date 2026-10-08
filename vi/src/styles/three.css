@@ -44,10 +44,10 @@
   }
 }
 
-/* Stacked masthead (tablet / phone): the canvas becomes its own band above
-   the copy. Space is reserved in the prerendered markup, so the page does
+/* Phones: the canvas becomes its own band above the copy. (Tablets keep
+   the full-hero canvas with the subject beside the headline.) Space is reserved in the prerendered markup, so the page does
    not shift when the scene arrives. */
-@media (max-width: 959px) {
+@media (max-width: 639px) {
   .hero--3d .hero__3d {
     inset: 0 0 auto;
     height: var(--hero3d-h);

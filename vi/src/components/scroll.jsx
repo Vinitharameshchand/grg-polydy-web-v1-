@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useElementProgress, usePrefersReducedMotion, useScrollSpy, useScrolledPast } from '../hooks/useScroll';
 import { Arrow } from './ui';
 
@@ -11,6 +11,19 @@ export function SectionNav({ items, label = 'On this page' }) {
   const ids = items.map((i) => i.id);
   const active = useScrollSpy(ids);
   const index = Math.max(0, ids.indexOf(active));
+  const listRef = useRef(null);
+
+  /* On narrow screens the strip scrolls sideways; keep the current section's
+     link in view so the highlight is never off-screen. */
+  useEffect(() => {
+    const list = listRef.current;
+    const link = list?.querySelector('a.is-active');
+    if (!list || !link || list.scrollWidth <= list.clientWidth) return;
+    const l = list.getBoundingClientRect();
+    const r = link.getBoundingClientRect();
+    const left = list.scrollLeft + (r.left - l.left) - (l.width - r.width) / 2;
+    list.scrollTo({ left: Math.max(0, left), behavior: 'smooth' });
+  }, [active]);
 
   const go = (e, id) => {
     e.preventDefault();
@@ -29,7 +42,7 @@ export function SectionNav({ items, label = 'On this page' }) {
     <nav className="secnav" aria-label={label}>
       <div className="wrap secnav__inner">
         <span className="secnav__label">{label}</span>
-        <ul className="secnav__list">
+        <ul className="secnav__list" ref={listRef}>
           {items.map((item, i) => (
             <li key={item.id}>
               <a
