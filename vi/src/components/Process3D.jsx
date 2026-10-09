@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useScroll } from '../hooks/useScroll';
+import { ColumnGuide } from './ui';
 
 /* Process copy. Generic to injection moulding and consistent with the
    capability statements in data/site.js — GRG to confirm before launch. */
@@ -97,10 +98,11 @@ export default function Process3D() {
   return (
     <section ref={sectionRef} className={`p3d p3d--${mode}`} aria-labelledby="p3d-title">
       <div className="p3d__sticky">
+        <ColumnGuide />
         <canvas ref={canvasRef} className="p3d__canvas" aria-hidden="true" />
         <div className="wrap p3d__overlay">
           <div className="p3d__panel">
-            <span className="label label--bar">How a part is made</span>
+            <span className="label label--bar label--sec">How a part is made</span>
             <h2 id="p3d-title" className="h2">
               From pellet to part.
             </h2>

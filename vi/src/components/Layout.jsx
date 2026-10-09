@@ -236,11 +236,6 @@ function Header() {
 function Footer() {
   return (
     <footer className="footer">
-      {/* Colour-grading layers: a warm bleed at the top edge and a cool lift
-          behind the brand, so the panel reads as lit rather than flat fill. */}
-      <span className="footer__grade" aria-hidden="true" />
-      <span className="footer__seam" aria-hidden="true" />
-
       <div className="wrap">
         <div className="footer__top">
           <div className="footer__brand">

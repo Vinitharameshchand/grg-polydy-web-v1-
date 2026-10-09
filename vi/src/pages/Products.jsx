@@ -30,7 +30,7 @@ export default function Products() {
           }))}
         />
         <Reveal>
-          <p className="muted" style={{ marginTop: 28, fontSize: 13.5, maxWidth: '62ch' }}>
+          <p className="note mt-4">
             Parts shown are representative of work produced at our plant. Customer-specific
             components and drawings are treated as confidential and are not published.
           </p>
@@ -57,7 +57,7 @@ export default function Products() {
       </Section>
 
       <Section>
-        <div className="split">
+        <div className="split split--rev">
           <Reveal as="figure" className="split__media">
             <Img
               name="display-cabinet"
@@ -67,7 +67,7 @@ export default function Products() {
             <figcaption>Component display — plant reception</figcaption>
           </Reveal>
           <Reveal className="stack" delay={100}>
-            <span className="label">Part range</span>
+            <span className="label label--bar label--sec">Part range</span>
             <h2 className="h2">From small clips to large structural mouldings.</h2>
             <p className="body-lg">
               Our production covers a wide range of part sizes and geometries — from small

@@ -34,7 +34,7 @@ export default function Capabilities() {
       {all.map((s, i) => (
         <Section key={s.id} id={s.id} tint={i % 2 === 1}>
           <Split image={s.image} alt={s.alt} reverse={i % 2 === 1}>
-            <span className="label">Capability {String(i + 1).padStart(2, '0')}</span>
+            <span className="label label--bar label--sec">Capability</span>
             <h2 className="h2">{s.title}</h2>
             <p className="body-lg">{s.text}</p>
             <ul className="ticks">
@@ -45,7 +45,7 @@ export default function Capabilities() {
           </Split>
 
           {s.id === 'injection-moulding' && (
-            <Reveal className="table-scroll" style={{ marginTop: 'clamp(36px,4vw,60px)' }}>
+            <Reveal className="table-scroll block-gap">
               <table className="table">
                 <caption className="sr-only">Injection moulding process controls</caption>
                 <thead>
@@ -71,7 +71,7 @@ export default function Capabilities() {
           )}
 
           {s.id === 'tooling-transfer' && (
-            <div className="grid g4" style={{ marginTop: 'clamp(36px,4vw,60px)' }}>
+            <div className="grid g4 block-gap">
               {TRANSFER.map(([t, d], n) => (
                 <Reveal className="feature" key={t} delay={n * 60}>
                   <span className="feature__num">{String(n + 1).padStart(2, '0')}</span>

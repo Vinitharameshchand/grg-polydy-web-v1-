@@ -205,13 +205,12 @@ export function Section({ children, tint, dark, sm, id, className = '' }) {
 }
 
 /** Editorial header: small label on the left, heading and copy on the right. */
-export function SectionHead({ label, title, num, children }) {
+export function SectionHead({ label, title, children }) {
   /* The heading animates itself word by word, so the wrapper only fades —
      stacking a block transform on top of that reads as two separate moves. */
   return (
-    <div className="cols" style={{ marginBottom: 'clamp(32px,4.5vw,64px)' }}>
-      <Reveal as="span" className="label label--bar" variant="fade">
-        {num && <span className="label__num">{num}</span>}
+    <div className="cols cols--head">
+      <Reveal as="span" className="label label--bar label--sec" variant="fade">
         {label}
       </Reveal>
       <div className="stack">
@@ -226,25 +225,28 @@ export function SectionHead({ label, title, num, children }) {
   );
 }
 
-/** Banner at the top of interior pages. */
+/** Banner at the top of interior pages: the same label / content columns
+    as every section head, with the breadcrumb in the label position. */
 export function PageHead({ crumb, title, lead, children }) {
   return (
     <header className="pagehead">
-      <div className="wrap">
-        <Reveal>
-          <nav className="crumbs" aria-label="Breadcrumb">
-            <Link to="/">Home</Link>
-            <span aria-hidden="true">/</span>
-            <span>{crumb}</span>
-          </nav>
-          <SplitText as="h1" className="h1" text={title} stagger={0.04} />
+      <div className="wrap cols">
+        <Reveal as="nav" className="crumbs" aria-label="Breadcrumb">
+          <Link to="/">Home</Link>
+          <span aria-hidden="true">/</span>
+          <span>{crumb}</span>
         </Reveal>
-        {lead && (
-          <Reveal delay={260} as="p" className="lead">
-            {lead}
+        <div>
+          <Reveal>
+            <SplitText as="h1" className="h1" text={title} stagger={0.04} />
           </Reveal>
-        )}
-        {children}
+          {lead && (
+            <Reveal delay={260} as="p" className="lead">
+              {lead}
+            </Reveal>
+          )}
+          {children}
+        </div>
       </div>
     </header>
   );
@@ -255,11 +257,11 @@ export function CTA({ title, text, primary, secondary }) {
   return (
     <Section dark>
       <Reveal className="cols">
-        <span className="label label--accent">Get in touch</span>
+        <span className="label label--bar label--sec">Get in touch</span>
         <div className="stack">
           <h2 className="h2">{title}</h2>
           <p className="lead">{text}</p>
-          <div className="btn-row" style={{ marginTop: 10 }}>
+          <div className="btn-row">
             <Link className="btn btn--accent" to={primary.to}>
               {primary.label}
               <Arrow />
@@ -273,6 +275,21 @@ export function CTA({ title, text, primary, secondary }) {
         </div>
       </Reveal>
     </Section>
+  );
+}
+
+/* --------------------------------------------------------- column guide */
+/** The 12 columns drawn as hairlines, like an engineering sheet. Decorative;
+    sits behind dark mastheads and shares the page grid exactly. */
+export function ColumnGuide() {
+  return (
+    <span className="colguide" aria-hidden="true">
+      <span className="wrap colguide__grid">
+        {Array.from({ length: 12 }, (_, i) => (
+          <i key={i} />
+        ))}
+      </span>
+    </span>
   );
 }
 

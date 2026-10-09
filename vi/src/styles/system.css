@@ -1,0 +1,1497 @@
+/* ==========================================================================
+   System layer — loaded last.
+   One set of tokens (colour roles, 8px spacing, a 1.25 type scale, a
+   12-column grid) and the layout patterns built on them. Everything earlier
+   in the cascade reads these tokens through the aliases in global.css, so a
+   colour or measure changes in exactly one place.
+
+   Rules of the system:
+   - Every left edge lands on a column line of the 12-column grid, and
+     multi-column compositions use the quarter lines only: columns 1, 4, 7
+     and 10 (section heads 1|4, splits and two-column blocks 1|7, tables
+     and numbered rows 1|4|7, footer 1|4|7|10, four-up grids on all four).
+     The one exception is the masthead: copy 1–7, stat panel 9–12.
+   - Section heads: label in columns 1–3, heading + lead in 4–12.
+   - Split layouts: 6 | 6, image and text top-aligned.
+   - Section eyebrows: amber rule, two-digit sequence number, label. Every
+     topic section on a page is numbered 01… in reading order, ending with
+     the contact band; the title block (hero / page head), content that
+     directly continues it (a gallery or register under the page title)
+     and callout cards are not.
+   - Flat colour. Amber is a signal (primary action, current state, small
+     markers), never a fill beyond buttons. Depth only in the WebGL scenes
+     and the hero photograph scrim.
+   ========================================================================== */
+
+:root {
+  /* ------------------------------------------------------------ neutrals */
+  /* One cool steel ramp; light pages are white with --n-50 for alternation. */
+  --n-0: #ffffff;
+  --n-50: #f4f6f9;
+  --n-100: #e6eaf0;
+  --n-200: #cdd4de;
+  --n-400: #7b8696;
+  --n-500: #5b6779;
+  --n-600: #46556a;
+  --n-700: #2b3a4f;
+  --n-900: #0f1a2b;
+
+  /* --------------------------------------------------------------- brand */
+  --navy-900: #0b1e3f; /* hero, dark bands */
+  --navy-950: #07152e; /* footer, process story */
+  --amber-500: #e8a317;
+  --amber-400: #f2b740; /* hover only */
+  --amber-ink: #8a5d06; /* amber as text on white: 5.75:1 */
+  --blue-700: #1d4e89;
+
+  /* --------------------------------------------------------- colour roles */
+  --surface: var(--n-0);
+  --surface-alt: var(--n-50);
+  --surface-sunk: var(--n-100); /* image placeholders while loading */
+  --surface-dark: var(--navy-900);
+  --surface-darker: var(--navy-950);
+
+  --text: var(--n-900); /* headings, 17.5:1 on white */
+  --text-2: var(--n-700); /* leads, strong body */
+  --text-body: var(--n-600); /* running text, 7.6:1 */
+  --text-muted: var(--n-500); /* captions, eyebrows, placeholders, 5.7:1 (5.3 on alt) */
+
+  --on-dark: #ffffff; /* 16.5:1 on navy */
+  --on-dark-muted: #c3cede; /* body on navy, 10.4:1 */
+  --on-dark-subtle: #9fadc2; /* eyebrows/meta on navy, 7.3:1 */
+
+  --rule: var(--n-100);
+  --rule-strong: var(--n-200);
+  --rule-control: var(--n-400); /* input underlines: 3.7:1, meets 1.4.11 */
+  --rule-ink: var(--n-900);
+  --rule-dark: rgba(255, 255, 255, 0.14);
+  --rule-dark-strong: rgba(255, 255, 255, 0.32);
+
+  --accent: var(--amber-500); /* primary CTA fill, current state, markers */
+  --accent-hover: var(--amber-400);
+  --accent-ink: var(--amber-ink);
+  --on-accent: var(--navy-900); /* 7.6:1 on amber */
+
+  --link: var(--blue-700); /* text links on light only, 8.4:1 */
+  --link-hover: var(--navy-900);
+
+  --focus: var(--blue-700); /* 8.4:1 on white; amber on dark grounds */
+
+  --ok-bg: #edf6f0;
+  --ok-rule: #2f7d4a;
+  --ok-text: #1c4a2c; /* 9.2:1 */
+  --err-bg: #fdf0ef;
+  --err-rule: #b42318;
+  --err-text: #7a1a12; /* 9.5:1 */
+
+  /* ------------------------------------------------------- spacing (8px) */
+  --s-0: 4px;
+  --s-1: 8px;
+  --s-2: 16px;
+  --s-3: 24px;
+  --s-4: 32px;
+  --s-5: 40px;
+  --s-6: 48px;
+  --s-8: 64px;
+  --s-10: 80px;
+  --s-12: 96px;
+  --s-16: 128px;
+
+  /* Three vertical rhythms only. */
+  --space-section: var(--s-16);
+  --space-section-sm: var(--s-10);
+  --space-head: var(--s-8); /* below a section head / between blocks */
+
+  /* ---------------------------------------------------------------- grid */
+  --content: 1296px;
+  --gutter: clamp(20px, 4vw, 56px); /* page side margin */
+  --col-gap: 24px;
+  --header-h: 72px;
+
+  /* ---------------------------------------------- type scale (1.25, 16px) */
+  --fs-12: 12px;
+  --fs-14: 14px;
+  --fs-16: 16px;
+  --fs-20: 20px;
+  --fs-25: 25px;
+  --fs-31: 31px;
+  --fs-39: 39px;
+  --fs-49: 49px;
+  --fs-61: 61px;
+  --fs-76: 76px;
+
+  --fs-eyebrow: var(--fs-12);
+  --fs-small: var(--fs-14);
+  --fs-body: var(--fs-16);
+  --fs-lead: var(--fs-20);
+  --fs-h3: var(--fs-20);
+  --fs-h4: var(--fs-25);
+  --fs-stat: var(--fs-31);
+  --fs-h2: var(--fs-39);
+  --fs-h1: var(--fs-49);
+  --fs-display: var(--fs-76);
+}
+
+/* Tablet: scale steps down one notch; rhythm tightens. */
+@media (max-width: 1024px) {
+  :root {
+    --space-section: var(--s-12);
+    --space-section-sm: var(--s-8);
+    --space-head: var(--s-6);
+    --col-gap: 20px;
+    --fs-h4: var(--fs-20);
+    --fs-stat: var(--fs-25);
+    --fs-h2: var(--fs-31);
+    --fs-h1: var(--fs-39);
+    --fs-display: var(--fs-61);
+  }
+}
+@media (max-width: 1200px) {
+  :root {
+    --header-h: 64px;
+  }
+}
+/* Phone. */
+@media (max-width: 640px) {
+  :root {
+    --space-section: var(--s-8);
+    --space-section-sm: var(--s-6);
+    --space-head: var(--s-5);
+    --col-gap: 16px;
+    --header-h: 56px;
+    --fs-lead: 18px;
+    --fs-h2: var(--fs-25);
+    --fs-h1: var(--fs-31);
+    /* "specification." must fit 280px of a 320px screen. */
+    --fs-display: clamp(31px, 10.4vw, 39px);
+  }
+}
+
+/* ================================================================ base */
+body {
+  font-size: var(--fs-body);
+  line-height: 1.6;
+  color: var(--text-body);
+  background: var(--surface);
+}
+h1,
+h2,
+h3,
+h4,
+h5 {
+  color: var(--text);
+  font-weight: 600;
+}
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+.hero--dark,
+.section--dark,
+.p3d,
+.footer,
+.lb {
+  --focus: var(--accent);
+}
+
+/* Figures never jitter or misalign. */
+.hero__panel strong,
+.card__num,
+.feature__num,
+.row__num,
+.p3d__num,
+.secnav__count,
+.lb__count,
+.footer__phone,
+.info__item dd,
+.certstrip strong,
+.table td {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ================================================================ grid */
+.wrap {
+  max-width: calc(var(--content) + 2 * var(--gutter));
+  padding-inline: var(--gutter);
+}
+
+/* Shared 12-column tracks. */
+.cols,
+.split,
+.row,
+.cert,
+.contact-grid,
+.secnav__inner,
+.footer__top,
+.hero__inner,
+.colguide__grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--col-gap);
+}
+
+/* Visible column guide, engineering-sheet style. Decorative, dark grounds only. */
+.colguide {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+.colguide__grid {
+  height: 100%;
+}
+.colguide i {
+  border-inline: 1px solid rgba(255, 255, 255, 0.045);
+}
+@media (max-width: 640px) {
+  .colguide {
+    display: none;
+  }
+}
+
+/* ============================================================ sections */
+.section {
+  padding-block: var(--space-section);
+}
+.section--sm {
+  padding-block: var(--space-section-sm);
+}
+.section--tint {
+  background: var(--surface-alt);
+}
+.section--dark {
+  background: var(--surface-dark);
+  color: var(--on-dark-muted);
+}
+.section--dark::before {
+  content: none;
+}
+/* Two dark bands in a row (e.g. a dark section then the CTA) are split by a
+   hairline instead of merging into one block. */
+.section--dark + .section--dark {
+  border-top: 1px solid var(--rule-dark);
+}
+
+/* ================================================================ type */
+.display,
+.hero--dark .display {
+  font-size: var(--fs-display);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+}
+.h1 {
+  font-size: var(--fs-h1);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+}
+.h2 {
+  font-size: var(--fs-h2);
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+}
+.h3 {
+  font-size: var(--fs-h3);
+  line-height: 1.3;
+  letter-spacing: -0.012em;
+}
+.lead {
+  font-size: var(--fs-lead);
+  line-height: 1.5;
+  font-weight: 400;
+  color: var(--text-2);
+  max-width: 60ch;
+}
+.body-lg {
+  font-size: var(--fs-body);
+  line-height: 1.7;
+  max-width: 65ch;
+}
+.section--dark .lead,
+.hero--dark .lead {
+  color: var(--on-dark-muted);
+}
+
+/* Eyebrow: 12px / 600 / uppercase / 0.12em at every width. */
+.label,
+.crumbs,
+.secnav__label,
+.feature__num,
+.cert span,
+.certstrip span,
+.table th,
+.field label,
+.info__item dt,
+.footer__h,
+.hero__panel li > span,
+.policy-list em,
+.statement footer,
+.cue,
+.p3d__hint {
+  font-size: var(--fs-eyebrow);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.label {
+  color: var(--text-muted);
+}
+.label--accent {
+  color: var(--link);
+}
+.section--dark .label,
+.section--dark .label--accent,
+.hero--dark .label,
+.p3d .label {
+  color: var(--on-dark-subtle);
+}
+/* Rule · number · label as a row of flex items, so a long label wraps
+   inside its own column with the rule and number pinned to the first line. */
+.label--bar {
+  display: flex;
+  align-items: flex-start;
+  line-height: 1.5;
+  text-wrap: balance;
+}
+.label--bar::before {
+  flex: none;
+  order: -2;
+  width: var(--s-3);
+  height: 2px;
+  margin: calc(0.75em - 1px) var(--s-1) 0 0;
+  transform: none;
+  background: var(--accent);
+}
+/* Section numbers come from one counter per page, so they can never skip
+   or repeat when a section is added or reordered. */
+main {
+  counter-reset: sec;
+}
+.label--sec {
+  counter-increment: sec;
+}
+.label--sec::after {
+  content: counter(sec, decimal-leading-zero);
+  flex: none;
+  order: -1;
+  margin-right: var(--s-1);
+  padding-right: var(--s-1);
+  border-right: 1px solid currentColor;
+  color: var(--accent-ink);
+  font-variant-numeric: tabular-nums;
+}
+.section--dark .label--sec::after,
+.p3d .label--sec::after {
+  color: var(--accent);
+}
+.head-gap {
+  margin-bottom: var(--s-5);
+}
+
+/* Consistent vertical stacking inside text columns. */
+.stack > * + * {
+  margin-top: var(--s-3);
+}
+.stack > .label + * {
+  margin-top: var(--s-2);
+}
+.stack > .btn-row,
+.stack > .link {
+  margin-top: var(--s-4);
+}
+.stack > .ticks {
+  margin-top: var(--s-4);
+}
+
+/* ======================================================== section head */
+/* Label in columns 1–3, heading and lead in 4–12; label sits on the
+   heading's first baseline. */
+.cols {
+  gap: var(--s-2) var(--col-gap);
+  align-items: baseline;
+}
+.cols > :first-child {
+  grid-column: 1 / span 3;
+  /* a long label wraps inside columns 1–3 and never runs up to the heading */
+  padding-right: var(--s-3);
+}
+.cols > :last-child {
+  grid-column: 4 / -1;
+}
+.cols--head {
+  margin-bottom: var(--space-head);
+}
+.cols .h2,
+.cols .h1 {
+  max-width: 24ch;
+}
+@media (max-width: 900px) {
+  .cols {
+    align-items: start;
+  }
+  .cols > :first-child,
+  .cols > :last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ============================================================ page head */
+.pagehead {
+  background: var(--surface);
+  padding-block: var(--space-section-sm) var(--s-8);
+  border-bottom: 1px solid var(--rule);
+}
+.pagehead h1 {
+  max-width: 20ch;
+  margin-top: 0;
+}
+.pagehead .lead {
+  margin-top: var(--s-3);
+}
+.crumbs {
+  gap: var(--s-1);
+  color: var(--text-muted);
+}
+.crumbs a:hover {
+  color: var(--link);
+}
+@media (max-width: 640px) {
+  .pagehead {
+    padding-block: var(--s-6) var(--s-5);
+  }
+}
+
+/* =============================================================== split */
+/* 6 | 6 on the column-7 line, top-aligned. The text column keeps clear of
+   the image with right padding; its measure is capped anyway. */
+.split {
+  row-gap: var(--s-4);
+  align-items: start;
+}
+.split > * {
+  grid-row: 1;
+}
+.split > :not(.split__media) {
+  grid-column: 1 / span 6;
+  padding-right: var(--s-5);
+}
+.split > .split__media {
+  grid-column: 7 / -1;
+}
+.split--rev > .split__media {
+  grid-column: 1 / span 6;
+}
+.split--rev > :not(.split__media) {
+  grid-column: 7 / -1;
+  padding-right: 0;
+}
+.split__media {
+  order: 0;
+}
+@media (max-width: 900px) {
+  .split > .split__media,
+  .split > :not(.split__media),
+  .split--rev > .split__media,
+  .split--rev > :not(.split__media) {
+    grid-column: 1 / -1;
+    grid-row: auto;
+    padding-right: 0;
+  }
+}
+.split__media img {
+  aspect-ratio: 4 / 3;
+}
+.split__media figcaption,
+.shot figcaption {
+  padding-top: var(--s-2);
+  font-size: var(--fs-small);
+}
+
+/* Calm resting state: no hover zoom on photographs. */
+.split__media:hover img,
+.shot:hover img,
+.tile:hover .tile__media img {
+  transform: none;
+  filter: none;
+}
+/* Keeps the parallax bleed (must follow the rule above). */
+.split__media .split__shift img {
+  transform: scale(1.09);
+}
+
+/* ================================================================ grids */
+.grid {
+  gap: var(--s-6) var(--col-gap);
+}
+/* Boxed cards: one uniform gutter in both directions. */
+.grid:has(.card) {
+  row-gap: var(--col-gap);
+}
+@media (max-width: 1024px) {
+  .g4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 901px) {
+  .g3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 900px) {
+  .g3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 640px) {
+  .g2,
+  .g3,
+  .g4 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ----------------------------------------------------------- dark cards */
+/* Hairline boxes on the navy: no fill, no glow, no lift. The amber top
+   rule marks the hovered card. */
+.card,
+.card:hover {
+  padding: var(--s-4);
+  background: transparent;
+  border: 1px solid var(--rule-dark);
+  box-shadow: none;
+}
+.card:hover,
+.tilt .card:hover {
+  border-color: var(--rule-dark-strong);
+  box-shadow: none;
+}
+.card__num {
+  font-size: var(--fs-eyebrow);
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  margin-bottom: var(--s-4);
+}
+.card h3 {
+  margin-bottom: var(--s-1);
+}
+.card p {
+  font-size: var(--fs-small);
+  color: var(--on-dark-muted);
+}
+.card .link {
+  margin-top: var(--s-3);
+}
+@media (max-width: 640px) {
+  .card,
+  .card:hover {
+    padding: var(--s-3);
+  }
+}
+
+/* The moving highlight was a second hover effect on top of the tilt. */
+.tilt--glare::after {
+  display: none;
+}
+.tilt.is-tilting .shot__btn,
+.tilt.is-tilting > .hero__panel {
+  box-shadow: none;
+}
+
+/* ------------------------------------------------------------- features */
+.feature {
+  padding: var(--s-3) 0 0;
+  border-top: 1px solid var(--rule-strong);
+}
+.feature__num {
+  color: var(--text-muted);
+  margin-bottom: var(--s-3);
+}
+.feature h3 {
+  margin-bottom: var(--s-1);
+}
+.feature p {
+  font-size: var(--fs-small);
+  line-height: 1.6;
+}
+.section--dark .feature {
+  border-top-color: var(--rule-dark-strong);
+}
+.section--dark .feature__num {
+  color: var(--accent);
+}
+.feature:hover {
+  border-top-color: var(--accent);
+}
+
+/* ----------------------------------------------------------------- tiles */
+.tile__media {
+  margin-bottom: var(--s-3);
+}
+.tile h3 {
+  margin-bottom: var(--s-1);
+}
+.tile p {
+  font-size: var(--fs-small);
+}
+
+/* --------------------------------------------------------------- gallery */
+.gallery {
+  gap: var(--s-4) var(--col-gap);
+}
+.shot__title {
+  font-size: var(--fs-small);
+}
+
+/* ========================================================= numbered rows */
+/* Number in the label columns (1–3), title 4–6, text 7–12. */
+.row {
+  row-gap: var(--s-1);
+  padding: var(--s-4) 0;
+  align-items: baseline;
+}
+.row__num {
+  grid-column: 1 / span 3;
+  font-size: var(--fs-small);
+  color: var(--text-muted);
+  padding-top: 0;
+}
+.row > h3 {
+  grid-column: 4 / span 3;
+  padding-right: var(--s-3);
+}
+.row__body,
+.row__body p {
+  grid-column: 7 / -1;
+  max-width: 60ch;
+}
+.row:hover {
+  background: none;
+}
+.row:hover h2,
+.row:hover h3 {
+  transform: none;
+}
+@media (max-width: 900px) {
+  .row__num {
+    grid-column: 1 / span 2;
+  }
+  .row > h3,
+  .row__body {
+    grid-column: 3 / -1;
+  }
+}
+
+/* The fill rail sits on column line 1; numbers clear it. */
+.track {
+  display: block;
+  position: relative;
+}
+.track__rail {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+}
+.track .row__num {
+  padding-left: var(--s-3);
+}
+@media (max-width: 640px) {
+  .track .row__num {
+    padding-left: var(--s-2);
+  }
+  .track__rail {
+    width: 1px;
+  }
+}
+
+/* ======================================================== certificates */
+.cert {
+  row-gap: var(--s-1);
+  padding: var(--s-4) 0;
+}
+.cert > h2 {
+  grid-column: 1 / span 3;
+  font-size: var(--fs-h4);
+}
+.cert > p {
+  grid-column: 4 / span 6;
+}
+.cert > span {
+  grid-column: 10 / -1;
+  color: var(--text-muted);
+}
+@media (max-width: 900px) {
+  .cert > h2,
+  .cert > p,
+  .cert > span {
+    grid-column: 1 / -1;
+    text-align: left;
+  }
+}
+
+/* ============================================================ statement */
+/* The attribution takes the label columns; the quote the content columns. */
+.statement {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--col-gap);
+  row-gap: var(--s-3);
+  max-width: none;
+  align-items: baseline;
+}
+.statement p {
+  grid-column: 4 / -1;
+  font-size: var(--fs-h4);
+  line-height: 1.45;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  max-width: 44ch;
+}
+.statement footer {
+  grid-column: 1 / span 3;
+  grid-row: 1;
+  margin-top: 0;
+  color: var(--text-muted);
+}
+@media (max-width: 900px) {
+  .statement p,
+  .statement footer {
+    grid-column: 1 / -1;
+  }
+  .statement footer {
+    grid-row: 2;
+  }
+}
+
+/* ================================================================ lists */
+.ticks li {
+  margin-bottom: var(--s-1);
+  font-size: var(--fs-body);
+}
+.policy-group + .policy-group {
+  margin-top: var(--space-head);
+}
+.policy-group__head {
+  border-bottom-color: var(--rule-ink);
+  padding-bottom: var(--s-2);
+}
+.policy-list {
+  column-gap: var(--col-gap);
+}
+.policy-list a,
+.policy-list span.pending {
+  padding: var(--s-2) 0;
+}
+.policy-list a:hover {
+  padding-left: 0;
+}
+.policy-list em {
+  color: var(--text-muted);
+}
+
+/* ======================================================== compliance */
+.compliance {
+  padding: var(--s-5);
+  background-color: var(--surface-alt);
+  background-image: linear-gradient(var(--accent), var(--accent));
+}
+.section--dark .compliance {
+  background-color: transparent;
+  border: 1px solid var(--rule-dark);
+}
+@media (max-width: 640px) {
+  .compliance {
+    padding: var(--s-3);
+  }
+}
+
+.report {
+  padding: var(--s-5);
+  border-color: var(--rule-strong);
+}
+@media (max-width: 640px) {
+  .report {
+    padding: var(--s-3);
+  }
+}
+
+/* ================================================================ table */
+.table th {
+  color: var(--text-muted);
+  border-bottom-color: var(--rule-ink);
+}
+/* Columns on the grid: 1–3, 4–6, 7–12 (the same lines as the numbered
+   rows). The cell's right padding equals the gutter, so each column's text
+   starts on a line. */
+@media (min-width: 641px) {
+  .table {
+    table-layout: fixed;
+  }
+  .table th,
+  .table td {
+    padding-block: var(--s-2);
+  }
+  /* Table cells ignore calc(% + px) widths, so the columns are plain
+     thirds/quarters and a left inset makes up the gutter remainder. */
+  .table th:nth-child(1) {
+    width: 25%;
+  }
+  .table th:nth-child(2) {
+    width: 25%;
+  }
+  .table th,
+  .table td {
+    padding-right: var(--col-gap);
+  }
+  .table tr > :nth-child(2) {
+    padding-left: calc(var(--col-gap) / 4);
+  }
+  .table tr > :nth-child(3) {
+    padding-left: calc(var(--col-gap) / 2);
+  }
+}
+/* Phones stack each row (global.css). The middle column was a link-blue
+   uppercase eyebrow; blue is reserved for links and some of these cells are
+   full sentences, so it is a quieter sentence-case line instead. */
+@media (max-width: 640px) {
+  .table tr {
+    padding-block: var(--s-3);
+  }
+  .table td:nth-child(2) {
+    margin: var(--s-1) 0;
+    font-size: var(--fs-small);
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--text-2);
+  }
+  .table td:nth-child(3) {
+    font-size: var(--fs-small);
+    color: var(--text-body);
+  }
+}
+
+/* ============================================================== buttons */
+/* Flat fills, one colour step on hover. */
+.btn {
+  min-height: 48px;
+  padding: 0 var(--s-3);
+  gap: var(--s-1);
+  font-size: var(--fs-small);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+.btn--solid {
+  background: var(--surface-dark);
+  color: var(--on-dark);
+}
+.btn--solid:hover {
+  background: var(--link);
+}
+.btn--line {
+  border-color: var(--rule-strong);
+}
+.btn-row {
+  gap: var(--s-2);
+}
+.btn--block {
+  width: 100%;
+}
+.header__cta .btn {
+  min-height: 40px;
+  padding: 0 var(--s-3);
+}
+@media (max-width: 1200px) {
+  .header__cta .btn {
+    padding: 0 var(--s-2);
+    font-size: 13px;
+  }
+}
+
+.link {
+  gap: var(--s-1);
+  font-weight: 600;
+}
+
+/* =============================================================== header */
+/* Solid ground and a permanent hairline: no blur, no condensing. */
+.header,
+.header.is-stuck {
+  background: var(--surface);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-bottom: 1px solid var(--rule);
+  box-shadow: none;
+}
+.header__inner,
+.header.is-stuck .header__inner {
+  height: var(--header-h);
+}
+.nav {
+  gap: 0;
+}
+.nav a {
+  padding: var(--s-1) 10px;
+  font-size: var(--fs-small);
+}
+/* Current page: amber, the active-state colour. */
+.nav a.active::after {
+  height: 2px;
+  bottom: 0;
+  background: var(--accent);
+}
+
+/* ======================================================= section nav */
+.secnav {
+  top: var(--header-h);
+  background: var(--surface);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+@media (min-width: 1201px) {
+  .secnav {
+    top: var(--header-h);
+  }
+}
+.secnav__inner {
+  align-items: center;
+  height: 56px;
+}
+.secnav__label {
+  grid-column: 1 / span 3;
+  color: var(--text-muted);
+}
+.secnav__list {
+  grid-column: 4 / span 8;
+  /* the first link's text, not its padding, sits on the column line */
+  margin-left: -12px;
+}
+.secnav__count {
+  grid-column: 12;
+  justify-self: end;
+  color: var(--text-muted);
+}
+@media (max-width: 760px) {
+  .secnav__list {
+    grid-column: 1 / span 11;
+  }
+}
+@media (max-width: 560px) {
+  .secnav__list {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ============================================================== ticker */
+.ticker {
+  background: var(--surface);
+  border-bottom: 1px solid var(--rule);
+  padding: var(--s-2) 0;
+}
+.ticker__item {
+  font-size: var(--fs-eyebrow);
+  letter-spacing: 0.12em;
+  color: var(--text-2);
+}
+
+/* ================================================================ hero */
+.hero__inner {
+  row-gap: var(--s-5);
+  align-items: end;
+  padding-block: var(--s-12) var(--s-8);
+}
+.hero__copy {
+  grid-column: 1 / span 7;
+}
+.hero__inner > .tilt {
+  grid-column: 9 / -1;
+}
+@media (max-width: 960px) {
+  .hero__inner {
+    padding-top: var(--s-10);
+  }
+  .hero__copy,
+  .hero__inner > .tilt {
+    grid-column: 1 / -1;
+  }
+}
+.hero--dark .display {
+  margin-top: var(--s-3);
+}
+.hero--dark .lead {
+  margin-top: var(--s-3);
+  max-width: 52ch;
+}
+.hero--dark .btn-row {
+  margin-top: var(--s-5);
+}
+.hero--dark .cue {
+  margin-top: var(--s-4);
+}
+/* The drawing-grid layer now carries the 12-column guide; it is taller than
+   the hero so its scroll drift never exposes an edge. */
+.hero--dark .hero__bg {
+  inset: 0 0 auto;
+  height: calc(100% + 240px);
+}
+
+/* Stat panel: flat navy plate on the right columns, white figures. */
+.hero__panel {
+  background: rgba(11, 30, 63, 0.86);
+  border: 1px solid var(--rule-dark-strong);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+}
+.hero__panel li {
+  padding: var(--s-3);
+  border-color: var(--rule-dark);
+}
+.hero__panel strong,
+.hero__panel strong span {
+  font-size: var(--fs-stat);
+  background: none;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  color: var(--on-dark);
+}
+.hero__panel li > span {
+  margin-top: var(--s-1);
+  color: var(--on-dark-subtle);
+}
+@media (max-width: 480px) {
+  .hero__panel li {
+    padding: var(--s-2);
+  }
+  .hero__panel strong,
+  .hero__panel strong span {
+    font-size: var(--fs-h3);
+  }
+}
+@media (hover: none), (pointer: coarse) {
+  .tilt > .hero__panel {
+    box-shadow: none;
+  }
+}
+
+/* ======================================================= process story */
+/* Own stacking context, so the column guide sits above the band's ground
+   (and under the canvas) in both the live and the static story. */
+.p3d__sticky {
+  isolation: isolate;
+}
+.p3d .label--bar::before {
+  background: var(--accent);
+}
+/* Flat, opaque plate over the canvas, four columns wide (five below 1280).
+   Opaque because the dimmed step titles must not sit over bright steel. */
+.p3d__panel {
+  width: calc(100% / 3 - var(--col-gap) * 2 / 3);
+  padding: var(--s-4);
+  background: var(--surface-darker);
+  border: 1px solid var(--rule-dark);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+}
+@media (max-width: 1279px) {
+  .p3d__panel {
+    width: calc(100% * 5 / 12 - var(--col-gap) * 7 / 12);
+  }
+}
+.p3d .h2 {
+  font-size: var(--fs-31);
+  margin: var(--s-2) 0 var(--s-3);
+}
+.p3d__steps li {
+  padding: var(--s-2) 0;
+  border-top-color: var(--rule-dark);
+}
+.p3d__rail {
+  margin-top: var(--s-2);
+}
+/* On column line 1, clear of the floating buttons on the right. */
+.p3d__hint {
+  right: auto;
+  left: max(var(--gutter), (100% - var(--content)) / 2);
+  bottom: var(--s-4);
+}
+@media (max-width: 760px), (max-aspect-ratio: 1/1) {
+  .p3d__panel {
+    width: calc(100% - 52px);
+    padding: var(--s-3) var(--s-2) var(--s-2);
+  }
+  .p3d .h2 {
+    font-size: var(--fs-20);
+    margin: var(--s-1) 0 var(--s-1);
+  }
+  .p3d__steps li {
+    padding: 0;
+  }
+}
+/* Without the canvas there is no scene to light: plain dark band. */
+.p3d--static {
+  background: var(--surface-darker);
+}
+/* No step is "current" in the static list, so every numeral reads alike. */
+.p3d--static .p3d__num {
+  color: var(--accent);
+}
+.p3d--static .p3d__panel {
+  width: 100%;
+  max-width: none;
+  padding: 0;
+  background: none;
+  border: 0;
+}
+.p3d--static .p3d__overlay {
+  padding-block: var(--space-section);
+}
+.p3d--static .p3d__steps {
+  max-width: 760px;
+}
+/* Desktop: the static story takes the section-head pattern, and the five
+   steps become a ruled table on the content columns: number on line 4,
+   title, then the description on line 7. */
+@media (min-width: 901px) {
+  .p3d--static .p3d__panel {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--col-gap);
+    align-items: baseline;
+  }
+  .p3d--static .label {
+    grid-column: 1 / span 3;
+    padding-right: var(--s-3);
+  }
+  .p3d--static .h2 {
+    grid-column: 4 / -1;
+    margin: 0 0 var(--space-head);
+    font-size: var(--fs-h2);
+  }
+  .p3d--static .p3d__steps {
+    grid-column: 4 / -1;
+    max-width: none;
+    border-bottom: 1px solid var(--rule-dark);
+  }
+  /* 9 nested tracks = parent columns 4–12. */
+  .p3d--static .p3d__steps li {
+    grid-template-columns: repeat(9, minmax(0, 1fr));
+    column-gap: var(--col-gap);
+    padding: var(--s-3) 0;
+  }
+  .p3d--static .p3d__num {
+    grid-column: 1;
+    padding-top: var(--s-0);
+  }
+  .p3d--static .p3d__steps li > div {
+    grid-column: 2 / -1;
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    column-gap: var(--col-gap);
+  }
+  .p3d--static .p3d__title {
+    grid-column: 1 / span 2;
+    font-size: var(--fs-h3);
+  }
+  .p3d--static .p3d__body {
+    grid-column: 3 / -1;
+  }
+  .p3d--static .p3d__body > p {
+    padding-top: 0;
+    max-width: 60ch;
+  }
+}
+
+/* ================================================================ form */
+.form {
+  padding: var(--s-5);
+  border-color: var(--rule-strong);
+}
+@media (max-width: 640px) {
+  .form {
+    padding: var(--s-3);
+  }
+}
+.form__title {
+  margin-bottom: var(--s-3);
+}
+.field {
+  margin-bottom: var(--s-3);
+}
+.field label {
+  margin-bottom: var(--s-1);
+  color: var(--text-muted);
+}
+.field input,
+.field select,
+.field textarea {
+  border-bottom-color: var(--rule-control);
+}
+.field input::placeholder,
+.field textarea::placeholder {
+  color: var(--text-muted);
+}
+/* Focus: the underline doubles in the focus colour (no layout shift). */
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-bottom-color: var(--focus);
+  box-shadow: 0 1px 0 0 var(--focus);
+}
+/* Invalid only after the visitor has interacted, never on first paint. */
+.field input:user-invalid,
+.field select:user-invalid,
+.field textarea:user-invalid {
+  border-bottom-color: var(--err-rule);
+  box-shadow: 0 1px 0 0 var(--err-rule);
+}
+.btn[disabled] {
+  opacity: 0.72;
+  cursor: progress;
+}
+.field-row {
+  column-gap: var(--col-gap);
+}
+.form__note {
+  margin-top: var(--s-2);
+  font-size: var(--fs-small);
+  color: var(--text-muted);
+}
+.form__status {
+  margin-top: var(--s-3);
+  padding: var(--s-2);
+  background: var(--ok-bg);
+  border-left: 2px solid var(--ok-rule);
+  font-size: var(--fs-small);
+  color: var(--ok-text);
+}
+.form__status--error {
+  background: var(--err-bg);
+  border-left-color: var(--err-rule);
+  color: var(--err-text);
+}
+
+/* ============================================================== contact */
+.contact-grid {
+  row-gap: var(--s-8);
+  align-items: start;
+}
+/* Same 6 | 6 split on the column-7 line as .split. */
+.contact-grid > :first-child {
+  grid-column: 1 / span 6;
+  padding-right: var(--s-5);
+}
+.contact-grid > :last-child {
+  grid-column: 7 / -1;
+}
+@media (max-width: 900px) {
+  .contact-grid > :first-child,
+  .contact-grid > :last-child {
+    grid-column: 1 / -1;
+    padding-right: 0;
+  }
+}
+.info__item {
+  gap: var(--s-1) var(--s-3);
+  padding: var(--s-2) 0;
+}
+.info__item dt {
+  color: var(--text-muted);
+  padding-top: var(--s-0);
+}
+.info__item dd {
+  font-size: var(--fs-body);
+}
+.map {
+  border-color: var(--rule-strong);
+}
+
+/* ============================================================== footer */
+/* Flat deep navy; brand and three link columns on the quarter lines
+   (1 | 4 | 7 | 10), the same lines as the four-up grids above it. */
+.footer {
+  background: var(--surface-darker);
+  color: var(--on-dark-muted);
+  padding-top: var(--space-section-sm);
+}
+.footer__top {
+  row-gap: var(--s-6);
+}
+.footer__brand {
+  grid-column: 1 / span 3;
+  padding-right: var(--s-3);
+}
+.footer__cols {
+  display: grid;
+  grid-column: 4 / -1;
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  column-gap: var(--col-gap);
+  row-gap: var(--s-5);
+}
+.footer__cols > :nth-child(1) {
+  grid-column: 1 / span 3;
+}
+.footer__cols > :nth-child(2) {
+  grid-column: 4 / span 3;
+}
+.footer__cols > :nth-child(3) {
+  grid-column: 7 / span 3;
+}
+@media (max-width: 1024px) {
+  .footer__brand,
+  .footer__cols {
+    grid-column: 1 / -1;
+  }
+  .footer__brand {
+    padding-right: 0;
+    padding-bottom: var(--s-5);
+    border-bottom: 1px solid var(--rule-dark);
+  }
+  .footer__cols {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+  .footer__cols > :nth-child(1) {
+    grid-column: 1 / span 3;
+  }
+  .footer__cols > :nth-child(2) {
+    grid-column: 4 / span 3;
+  }
+  .footer__cols > :nth-child(3) {
+    grid-column: 7 / -1;
+  }
+}
+@media (max-width: 700px) {
+  .footer__cols > :nth-child(1) {
+    grid-column: 1 / span 6;
+  }
+  .footer__cols > :nth-child(2) {
+    grid-column: 7 / span 6;
+  }
+  .footer__cols > :nth-child(3) {
+    grid-column: 1 / -1;
+    padding-top: var(--s-4);
+    border-top: 1px solid var(--rule-dark);
+  }
+}
+@media (max-width: 420px) {
+  .footer__cols > :nth-child(n) {
+    grid-column: 1 / -1;
+  }
+}
+.footer__brand > p {
+  margin-top: var(--s-3);
+  font-size: var(--fs-small);
+  line-height: 1.7;
+  color: var(--on-dark-muted);
+}
+.footer__badges {
+  gap: var(--s-1);
+  margin-top: var(--s-3);
+}
+.footer__badges li {
+  font-size: var(--fs-eyebrow);
+  padding: var(--s-0) var(--s-1);
+  border-color: var(--rule-dark-strong);
+}
+.footer__h {
+  margin: 0 0 var(--s-2);
+  padding-bottom: var(--s-2);
+  border-bottom-color: var(--rule-dark);
+}
+.footer__h::after {
+  width: var(--s-3);
+  height: 2px;
+  bottom: -1px;
+  background: var(--accent);
+}
+.footer__list a {
+  font-size: var(--fs-small);
+  color: var(--on-dark-muted);
+}
+.footer__list a:hover {
+  transform: none;
+}
+.footer__phone,
+.footer__mail {
+  display: block;
+  width: fit-content;
+}
+.footer__phone {
+  font-size: var(--fs-h3);
+}
+.footer__mail {
+  margin-top: var(--s-1);
+  font-size: var(--fs-small);
+}
+.footer__address {
+  margin-top: var(--s-3);
+  font-size: var(--fs-small);
+  color: var(--on-dark-subtle);
+}
+.footer__cta {
+  margin-top: var(--s-3);
+  min-height: 44px;
+  padding: 0 var(--s-3);
+  font-weight: 600;
+  border-color: var(--rule-dark-strong);
+}
+.footer__bottom {
+  margin-top: var(--s-8);
+  padding: var(--s-3) 0;
+  border-top-color: var(--rule-dark);
+  font-size: 13px;
+  color: var(--on-dark-subtle);
+}
+/* The last lines stay clear of the floating buttons (see polish.css). */
+@media (max-width: 600px) {
+  .footer__bottom {
+    padding-bottom: 76px;
+  }
+}
+
+/* ============================================================ overlays */
+.lb__scrim {
+  background: rgba(7, 21, 46, 0.94);
+}
+.progress span {
+  background: var(--accent);
+}
+
+/* ============================================================ utilities */
+/* Replace one-off inline margins: every gap comes from the scale. */
+.mt-2 {
+  margin-top: var(--s-2);
+}
+.mt-4 {
+  margin-top: var(--s-4);
+}
+.mt-5 {
+  margin-top: var(--s-5);
+}
+.block-gap {
+  margin-top: var(--space-head);
+}
+.note {
+  font-size: var(--fs-small);
+  color: var(--text-muted);
+  max-width: 65ch;
+}
+.text-link {
+  color: var(--link);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+.text-link:hover {
+  color: var(--link-hover);
+}
+
+/* ======================================================== reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .split__media .split__shift img {
+    transform: none;
+  }
+}

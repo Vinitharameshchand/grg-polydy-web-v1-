@@ -25,7 +25,7 @@ export default function Facility() {
 
       <Section tint>
         <Split image="facility-signage" alt="GRG Polydynamics plant entrance" caption="Plant entrance" reverse>
-          <span className="label">Visit us</span>
+          <span className="label label--bar label--sec">Visit us</span>
           <h2 className="h2">Customer audits and facility visits.</h2>
           <p className="body-lg">
             We welcome customer audits, supplier assessments and facility visits. Our plant is at

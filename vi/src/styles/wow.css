@@ -1,7 +1,7 @@
 /* ==========================================================================
    Impact layer
-   Cinematic dark masthead, amber promoted from a mark to a working colour,
-   a card system with real hover, and watermark numerals behind section heads.
+   Cinematic dark masthead, the amber primary button, the dark card system
+   and industry tiles. Colours and spacing come from system.css tokens.
    Loaded after the base system so these rules win where they overlap.
    ========================================================================== */
 
@@ -9,28 +9,15 @@
 /* Amber on navy is the industrial pairing (plant machinery, safety marking).
    Navy text on amber measures ~7.5:1, so it is safe for the primary action. */
 .btn--accent {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
   background: var(--accent);
-  color: var(--brand);
+  color: var(--on-accent);
   font-weight: 600;
   border-color: var(--accent);
 }
-.btn--accent::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: var(--accent-hover);
-  transform: translateX(-101%);
-  transition: transform 0.45s var(--ease-out);
-}
-.btn--accent:hover::before {
-  transform: none;
-}
 .btn--accent:hover {
-  color: var(--brand);
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+  color: var(--on-accent);
 }
 
 /* ----------------------------------------------------- dark cinematic hero */
@@ -80,26 +67,11 @@
     linear-gradient(180deg, rgba(6, 16, 39, 0.35) 0%, transparent 30%, rgba(6, 16, 39, 0.72) 100%);
 }
 
-/* Grid and glows repainted for the dark ground. */
+/* Drawing layer fills the masthead. */
 .hero--dark .hero__bg {
   z-index: -1;
   inset: 0;
   height: 100%;
-}
-.hero--dark .hero__rule {
-  background-image:
-    linear-gradient(to right, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
-  mask-image: radial-gradient(90% 90% at 70% 40%, #000 10%, transparent 72%);
-  -webkit-mask-image: radial-gradient(90% 90% at 70% 40%, #000 10%, transparent 72%);
-}
-.hero--dark .hero__glow--warm {
-  background: radial-gradient(circle, rgba(232, 163, 23, 0.28), transparent 62%);
-  right: -6vw;
-  top: -10vw;
-}
-.hero--dark .hero__glow--cool {
-  background: radial-gradient(circle, rgba(47, 127, 200, 0.26), transparent 66%);
 }
 
 .hero__inner {
@@ -134,16 +106,6 @@
   max-width: 13ch;
   margin-top: 22px;
   text-wrap: balance;
-}
-/* Emphasised word carries a warm gradient — colour as a typographic accent.
-   The gradient must be on the innermost text span: background-clip:text does
-   not paint through the overflow-hidden word clips, so on the wrapper the
-   word simply disappears. */
-.hero__em .at__i {
-  background: linear-gradient(92deg, #ffd27a 0%, var(--accent) 55%, #f7c65a 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
 }
 .hero--dark .lead {
   color: var(--on-brand);
@@ -248,15 +210,6 @@
   }
 }
 
-/* Amber seam between the masthead and the ticker. */
-.hero--dark::after {
-  content: "";
-  position: absolute;
-  inset: auto 0 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--accent), rgba(232, 163, 23, 0.15) 60%, transparent);
-}
-
 /* ------------------------------------------------------------- card system */
 .card {
   position: relative;
@@ -274,7 +227,7 @@
   inset: 0 auto auto 0;
   width: 100%;
   height: 2px;
-  background: linear-gradient(90deg, var(--accent), transparent 80%);
+  background: var(--accent);
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 0.5s var(--ease-out);
@@ -325,14 +278,6 @@
   position: relative;
   overflow: hidden;
 }
-.tile__media::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, transparent 55%, rgba(6, 16, 39, 0.55));
-  opacity: 0;
-  transition: opacity 0.4s var(--ease);
-}
 .tile__arrow {
   position: absolute;
   right: 14px;
@@ -355,13 +300,9 @@
 .tile:hover {
   transform: translateY(-6px);
 }
-.tile:hover .tile__media::after,
 .tile:hover .tile__arrow {
   opacity: 1;
   transform: none;
-}
-.tile:hover .tile__media img {
-  transform: scale(1.06);
 }
 .tile h3 {
   transition: color 0.3s var(--ease);

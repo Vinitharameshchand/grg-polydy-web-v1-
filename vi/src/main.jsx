@@ -11,10 +11,10 @@ import './styles/hero.css';
 import './styles/text.css';
 import './styles/wow.css';
 import './styles/depth.css';
-import './styles/gradients.css';
 import './styles/certstrip.css';
 import './styles/three.css';
 import './styles/polish.css';
+import './styles/system.css';
 
 const root = document.getElementById('root');
 

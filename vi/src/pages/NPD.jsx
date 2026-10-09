@@ -59,7 +59,7 @@ export default function NPD() {
           caption="Engineering office"
           reverse
         >
-          <span className="label">Deliverables</span>
+          <span className="label label--bar label--sec">Deliverables</span>
           <h2 className="h2">What you receive at each gate.</h2>
           <p className="body-lg">
             Every NPD programme produces a documented, auditable trail — the same package our

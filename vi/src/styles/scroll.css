@@ -116,7 +116,7 @@
 .track__fill {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, var(--accent), var(--brand));
+  background: var(--accent);
   transform-origin: top;
   transform: scaleY(0);
   will-change: transform;

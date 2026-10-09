@@ -75,11 +75,9 @@ export default function Contact() {
 
       <Section>
         <div className="contact-grid">
-          <Reveal>
-            <span className="label">Reach us</span>
-            <h2 className="h2" style={{ marginTop: 16, marginBottom: 28 }}>
-              {company.legalName}
-            </h2>
+          <Reveal className="stack">
+            <span className="label label--bar label--sec">Reach us</span>
+            <h2 className="h2">{company.legalName}</h2>
 
             <dl className="info">
               <div className="info__item">
@@ -125,7 +123,7 @@ export default function Contact() {
 
           <Reveal delay={100}>
             <form className="form" id="enquiry-form" noValidate onSubmit={onSubmit}>
-              <h2 className="h3" style={{ marginBottom: 26 }}>
+              <h2 className="h3 form__title">
                 Enquiry form
               </h2>
 
@@ -187,7 +185,7 @@ export default function Contact() {
               {/* Honeypot for bots; hidden from people and assistive tech. */}
               <input type="checkbox" name="botcheck" className="hp" tabIndex={-1} autoComplete="off" aria-hidden="true" />
 
-              <button className="btn btn--solid" type="submit" style={{ width: '100%' }} disabled={sending} aria-busy={sending}>
+              <button className="btn btn--solid btn--block" type="submit" disabled={sending} aria-busy={sending}>
                 {sending ? 'Sending…' : 'Send enquiry'}
                 <Arrow />
               </button>
@@ -222,11 +220,11 @@ export default function Contact() {
 
       <Section tint sm>
         <Reveal>
-          <div className="cols" style={{ marginBottom: 28 }}>
-            <span className="label">Location</span>
-            <div>
+          <div className="cols cols--head">
+            <span className="label label--bar label--sec">Location</span>
+            <div className="stack">
               <h2 className="h2">Vallakottai, Sriperumbudur.</h2>
-              <p className="lead" style={{ marginTop: 12 }}>
+              <p className="lead">
                 Inside the Chennai automotive manufacturing belt, close to the OEM and tier-one
                 supply base we serve.
               </p>

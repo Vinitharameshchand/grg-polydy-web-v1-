@@ -81,19 +81,10 @@
 
 /* ------------------------------------------------------ section eyebrows */
 /* The outlined watermark numerals collided with the eyebrow and only showed
-   on some sections; the number now leads the eyebrow itself. */
+   on some sections; the number now leads the eyebrow itself (a CSS counter,
+   see .label--sec in system.css). */
 .cols__num {
   display: none;
-}
-.label__num {
-  color: #8a5d06; /* amber darkened to 5.7:1 on white (5.4:1 on tint) for 11px text */
-  font-variant-numeric: tabular-nums;
-  margin-right: 10px;
-  padding-right: 10px;
-  border-right: 1px solid currentColor;
-}
-.section--dark .label__num {
-  color: var(--accent);
 }
 
 /* ----------------------------------------------------------- hero figures */

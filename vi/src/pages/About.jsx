@@ -26,7 +26,7 @@ export default function About() {
           caption="Vallakottai, Sriperumbudur"
           eager
         >
-          <span className="label">The company</span>
+          <span className="label label--bar label--sec">The company</span>
           <h2 className="h2">A plastics division built to serve global customers.</h2>
           <p className="body-lg">
             GRG Polydynamics Private Limited is a plastics division started in the year 2011 to
@@ -54,7 +54,7 @@ export default function About() {
             is evident in our current businesses. Our goal is to establish a long-term relationship
             with our customer which will benefit both the ends.”
           </p>
-          <footer>Our commitment</footer>
+          <footer className="label label--bar label--sec">Our commitment</footer>
         </Reveal>
       </Section>
 

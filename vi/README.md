@@ -83,8 +83,9 @@ src/
     kit.js                  renderer, materials, procedural mould / part / granules
     heroScene.js            masthead scene: inject → open → eject → present, loops
     processScene.js         story scene: camera path along the machine, posed by scroll
-  styles/  global.css  scroll.css  hero.css  footer.css  text.css  wow.css  depth.css  gradients.css  fonts.css
-           three.css (WebGL layers)  polish.css (loaded last: captions, eyebrows, list markers, phone fixes)
+  styles/  global.css  scroll.css  hero.css  footer.css  text.css  wow.css  depth.css  certstrip.css  fonts.css
+           three.css (WebGL layers)  polish.css (captions, eyebrows, list markers, phone fixes)
+           system.css (loaded last: design tokens, 12-column grid, type scale — see Design system)
 scripts/
   images.mjs                builds responsive derivatives + og-cover.jpg
   fetch-fonts.mjs           downloads and self-hosts Inter
@@ -138,8 +139,8 @@ First-visit home page, mobile: **580 KB** (was 2.28 MB).
 
 Verified by `npm run audit:a11y` on every build:
 
-- Colour contrast: 0 failures. The old `--muted` failed at 3.1–3.7:1; it is now 5.67:1, and
-  footer text on navy measures 7.25–10.36:1.
+- Colour contrast: 0 failures. Every colour role is measured in the Design system table below;
+  the lowest text pairing is 5.2:1 (muted captions on the tinted ground).
 - The closed mobile drawer is `inert` — 0 of its 12 links are reachable by Tab. Opening moves
   focus to the first link, Tab is trapped inside, Escape closes it and focus returns to the
   button that opened it.
@@ -198,20 +199,16 @@ skip link       stays at -9999px after back-to-top; focus goes to <main>
 ### Impact layer (`wow.css`)
 
 - **Cinematic masthead** — the plant photograph sits *behind* the headline under a navy scrim
-  (near-solid on the left where the type is, opening to the right), with a frosted stat panel
-  over it, a gradient-filled emphasis word, and a location tag. Headline on the scrim measures
-  16.5:1.
-- **Amber as a working colour** — the header CTA, hero primary and every CTA-band primary are
-  amber with navy text (7.6:1). Card numerals and the hero eyebrow are amber on navy (7.6–8.2:1).
-- **Dark card grid** for the six services on the home page, with a lift, glow border and an
-  amber top rule on hover.
-- **Watermark numerals** (`01`–`04`) outlined behind the home section heads; hidden under 880px.
-- **Industry tiles** lift, darken at the base and reveal an amber arrow badge on hover.
+  (near-solid on the left where the type is, opening to the right), with a flat navy stat panel
+  on the right columns. Headline on the scrim measures ≥8.3:1 even over a white photo pixel.
+- **Amber primary action** — the header CTA, hero primary and every CTA-band primary are amber
+  with navy text (7.6:1). Amber is otherwise only a marker (see Design system).
+- **Dark card grid** for the six services on the home page: hairline boxes, an amber top rule on
+  hover, plus the 3D tilt.
+- **Industry tiles** reveal an amber arrow badge on hover, plus the 3D tilt.
 
-Two selector traps surfaced while building this, both commented in the CSS: `background-clip:
-text` does not paint through the word-clip spans (the gradient must be on the innermost span, or
-the word vanishes), and `.hero__panel span` restyled the `CountUp` span inside `<strong>` as a
-label (use the direct-child combinator).
+A selector trap, commented in the CSS: `.hero__panel span` restyled the `CountUp` span inside
+`<strong>` as a label (use the direct-child combinator).
 
 ### Depth (`depth.css` + `Tilt.jsx`)
 
@@ -219,8 +216,9 @@ CSS 3D only — no WebGL, no library. There is no model to show, and Three.js wo
 of JavaScript for a rotating rectangle.
 
 - **Pointer-tracked tilt** on the service cards, industry tiles, gallery tiles and the hero stat
-  panel: the element rotates toward the cursor in perspective (`--rx`/`--ry`), comes forward
-  (`translateZ`), and a specular highlight rides the surface at the pointer (`--gx`/`--gy`).
+  panel: the element rotates toward the cursor in perspective (`--rx`/`--ry`) and comes forward
+  (`translateZ`). The specular highlight layer (`--gx`/`--gy`) is switched off in `system.css`
+  so the tilt is the only hover effect.
   Contents sit at different `translateZ` depths so it reads as a solid object, not a flat card.
 - Follows the pointer at 120ms, settles back over 550ms. Custom properties only — the browser
   composites; React never re-renders per move.
@@ -313,24 +311,79 @@ bugs: the error collector flagged the deliberately-requested 404 document, a scr
 `offsetTop` (relative to a positioned ancestor, not the page), and a focus check read
 `activeElement` before the next-frame restore ran.
 
-### Gradients (`gradients.css`)
+## Design system (`system.css`)
 
-Four named ramps, used consistently so the site reads as one palette with depth:
+"Swiss industrial": one 12-column grid, an 8px spacing scale, a 1.25 type scale and flat colour
+with defined roles. `system.css` is imported **last** in both `main.jsx` and `entry-server.jsx`;
+the older names in `global.css` (`--brand`, `--ink`, `--muted`, `--paper-2`…) are aliases of these
+roles, so a colour changes in one place. There are no gradient fills, gradient text, gradient
+borders or glow fields on content surfaces — depth is reserved for the WebGL canvases and the hero
+photograph scrim. (`gradients.css` was removed in this pass.)
 
-| Token | Ramp | Used for |
-| --- | --- | --- |
-| `--grad-amber` | pale gold → amber → gold | hero panel numerals, card numerals, the amber button, label bars, progress bar, track fill |
-| `--grad-ink` | navy → link blue | About stat figures, the solid button, link underlines, section watermarks |
-| `--grad-navy` | indigo → navy → near-black | reserved for dark surfaces |
-| `--grad-cool` | pale blue → white | page banners, ticker band |
+**Grid.** Content max 1296px, side margin `--gutter` = `clamp(20px, 4vw, 56px)`, 12 columns with
+`--col-gap` 24px (20px ≤1024px, 16px ≤640px). Header, every section, the hero and the footer use the
+same `.wrap`, so every left edge lands on a column line, and multi-column compositions use only
+the quarter lines — columns **1, 4, 7, 10** — so the same job always lands on the same line.
+Patterns:
 
-Gradient text is confined to numerals and the hero emphasis word; the amber ramp only ever sits
-on navy (darkest stop 7:1) and the ink ramp only on white. Cards get a true gradient *border*
-on hover — a masked pseudo-element, so the glass fill beneath is untouched. Photo tiles rise a
-navy scrim on hover so the caption stays legible.
+| Pattern | Columns |
+| --- | --- |
+| Section head (`.cols`, `PageHead`, `.statement`) | eyebrow/breadcrumb 1–3, heading + lead 4–12 (lead ≤60ch); stacked ≤900px |
+| Split (`.split`) and the contact info / form | 6 \| 6 on the column-7 line; `--rev` mirrors; top-aligned; images 4:3 |
+| Tables (`.table`) | 1–3, 4–6, 7–12 |
+| Card grids | `.g3` 3 × 4 cols, `.g4` 4 × 3 cols, gallery 3 × 4; 2-up ≤900/1024px, 1-up ≤640px |
+| Numbered rows (`.row`), static process story | number 1–3 (story: on line 4), title 4–6, text 7–12 (the process-track rail sits on line 1) |
+| Footer | brand 1–3, link columns 4–6, 7–9, 10–12 (tablet: 1–3, 4–6, 7–12) |
+| Hero (the one exception) | copy 1–7, stat panel 9–12 |
 
-`npm run audit:a11y` evaluates gradient text by testing every colour stop against the ground
-and reporting the worst — `color: transparent` would otherwise read as black and fail falsely.
+**Section numbering.** Every topic section opens with the same eyebrow — amber rule, two-digit
+number, label (`label label--bar label--sec`). The number is a CSS counter reset on `<main>`, so
+each page counts 01… in reading order and ends with the contact band; it cannot skip or repeat.
+Not numbered: the title block (hero / page head), content that directly continues it (the gallery
+on Products and Facility, the certificate register on Quality) and callout cards (the report card
+and the child-labour declaration on Sustainability). Long labels wrap inside columns 1–3.
+
+A 12-column hairline guide (`ColumnGuide`) is drawn behind the dark masthead and the process story,
+at 4.5% white — decorative, hidden on phones.
+
+**Spacing.** 8px base: `--s-0` 4 · `--s-1` 8 · `--s-2` 16 · `--s-3` 24 · `--s-4` 32 · `--s-5` 40 ·
+`--s-6` 48 · `--s-8` 64 · `--s-10` 80 · `--s-12` 96 · `--s-16` 128. Three vertical rhythms only:
+`--space-section` (128 / 96 / 64px desktop / tablet / phone), `--space-section-sm` (80 / 64 / 48)
+and `--space-head` (64 / 48 / 40, below a section head and between blocks). One-off inline margins
+were replaced by `.mt-4`, `.mt-5`, `.block-gap`, `.head-gap` and `.stack`.
+
+**Image sizes.** Split images are requested at 1.23× their box (`Img.jsx`): a 3:2 photograph
+covering a 4:3 box is drawn 1.125× wide and the parallax adds 1.09×, so sizing for the box picked
+a derivative that was then upscaled. Many originals are 1200px wide, which still caps sharpness
+on 2× phones.
+
+**Type** (Inter, 1.25 ratio from 16px): eyebrow 12 (600, uppercase, 0.12em, all widths) · small 14
+· body 16 · lead / h3 20 · h4 25 · stat 31 · h2 39 · h1 49 · display 76. Tablet drops h2/h1/display
+one step, phones two. Headings 600 with negative tracking; all figures use tabular numerals.
+
+**Colour roles** (contrast measured, WCAG 2.x formula):
+
+| Role | Value | Use | Contrast |
+| --- | --- | --- | --- |
+| `--surface` / `--surface-alt` | `#ffffff` / `#f4f6f9` | page / alternating band (one tint only) | — |
+| `--surface-dark` / `--surface-darker` | `#0b1e3f` / `#07152e` | hero, dark bands / footer, story | — |
+| `--text` | `#0f1a2b` | headings | 17.5 on white, 16.1 on alt |
+| `--text-2` | `#2b3a4f` | leads | 11.5 / 10.7 |
+| `--text-body` | `#46556a` | running text | 7.6 / 7.0 |
+| `--text-muted` | `#5b6779` | captions, eyebrows, placeholders | 5.7 / 5.3 |
+| `--on-dark` / `-muted` / `-subtle` | `#fff` / `#c3cede` / `#9fadc2` | text on navy | 16.5 / 10.4 / 7.3 on `#0b1e3f` |
+| `--accent` | `#e8a317` | primary CTA fill, active state, markers, numerals on navy | 7.6 on navy |
+| `--on-accent` | `#0b1e3f` | text on amber | 7.6 |
+| `--accent-ink` | `#8a5d06` | amber as text on light (section numbers) | 5.8 / 5.3 |
+| `--link` | `#1d4e89` | text links on light, focus ring on light | 8.4 / 7.8 |
+| `--rule` / `--rule-strong` / `--rule-ink` | `#e6eaf0` / `#cdd4de` / `#0f1a2b` | hairlines | decorative |
+| `--rule-control` | `#7b8696` | form-field underlines | 3.7 (non-text ≥3) |
+| `--ok-*` / `--err-*` | `#1c4a2c` on `#edf6f0` / `#7a1a12` on `#fdf0ef` | form status | 9.2 / 9.5 |
+
+Worst cases over the photograph: hero headline 8.3:1 and stat labels 4.7:1 if the pixel under them
+were pure white. The process-story panel is opaque, so dimmed step titles hold 5.2:1.
+
+`npm run audit:a11y` still evaluates gradient text by testing every colour stop (none remain).
 
 ## Known constraints
 

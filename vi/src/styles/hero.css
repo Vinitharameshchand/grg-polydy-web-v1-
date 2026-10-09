@@ -1,7 +1,7 @@
 /* ==========================================================================
    Home masthead
-   A drawing-board backdrop behind the headline: fine grid, two soft colour
-   fields, and layers that drift at different rates as the page scrolls away.
+   A drawing-board backdrop behind the headline (the 12-column guide) and
+   layers that drift at different rates as the page scrolls away.
    Everything here is decorative — no content depends on it.
    ========================================================================== */
 
@@ -9,8 +9,6 @@
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  /* Cool lift at the top so the white page does not start abruptly. */
-  background: linear-gradient(180deg, #f6f9fd 0%, var(--paper) 62%);
 }
 
 .hero__bg {
@@ -21,42 +19,12 @@
   pointer-events: none;
 }
 
-/* Engineering grid — 64px squares, fading out before it reaches the copy. */
+/* Drawing layer — carries the column guide (see system.css .colguide). */
 .hero__rule {
   position: absolute;
   inset: 0;
   transform: translate3d(0, calc(var(--sy, 0px) * -1), 0);
   will-change: transform;
-  background-image:
-    linear-gradient(to right, rgba(15, 26, 43, 0.055) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(15, 26, 43, 0.055) 1px, transparent 1px);
-  background-size: 64px 64px;
-  mask-image: radial-gradient(120% 78% at 78% 12%, #000 12%, transparent 72%);
-  -webkit-mask-image: radial-gradient(120% 78% at 78% 12%, #000 12%, transparent 72%);
-}
-
-.hero__glow {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(10px);
-}
-.hero__glow--warm {
-  width: 46vw;
-  height: 46vw;
-  max-width: 660px;
-  max-height: 660px;
-  right: -8vw;
-  top: -14vw;
-  background: radial-gradient(circle, rgba(232, 163, 23, 0.16), transparent 64%);
-}
-.hero__glow--cool {
-  width: 52vw;
-  height: 52vw;
-  max-width: 740px;
-  max-height: 740px;
-  left: -16vw;
-  top: 4vw;
-  background: radial-gradient(circle, rgba(29, 78, 137, 0.12), transparent 66%);
 }
 
 /* Copy block drifts a little slower than the page. */

@@ -185,7 +185,7 @@
 .p3d__rail span {
   display: block;
   height: 100%;
-  background: var(--grad-amber, var(--accent));
+  background: var(--accent);
   transform-origin: left;
   transform: scaleX(var(--p, 0));
 }
@@ -207,7 +207,7 @@
   content: "";
   width: 1px;
   height: 28px;
-  background: linear-gradient(var(--accent), transparent);
+  background: var(--accent);
   animation: p3d-hint 1.8s var(--ease) infinite;
   transform-origin: top;
 }

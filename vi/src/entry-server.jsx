@@ -10,10 +10,10 @@ import './styles/hero.css';
 import './styles/text.css';
 import './styles/wow.css';
 import './styles/depth.css';
-import './styles/gradients.css';
 import './styles/certstrip.css';
 import './styles/three.css';
 import './styles/polish.css';
+import './styles/system.css';
 
 /** Renders one route to an HTML string for the prerender step. */
 export function render(url) {

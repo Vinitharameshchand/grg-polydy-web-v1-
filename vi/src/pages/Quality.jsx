@@ -37,9 +37,9 @@ export default function Quality() {
           ))}
         </div>
         <Reveal>
-          <p className="muted" style={{ marginTop: 26, fontSize: 13.5 }}>
+          <p className="note mt-4">
             Certificate copies are available on request. Please{' '}
-            <Link to="/contact" style={{ color: 'var(--link)', fontWeight: 500 }}>
+            <Link className="text-link" to="/contact">
               contact us
             </Link>{' '}
             for current validity dates and scope statements.
@@ -49,7 +49,7 @@ export default function Quality() {
 
       <Section tint>
         <Split image="quality-lab" alt="Quality laboratory" caption="Quality laboratory" reverse>
-          <span className="label">In the plant</span>
+          <span className="label label--bar label--sec">In the plant</span>
           <h2 className="h2">A quality lab, not just a quality manual.</h2>
           <p className="body-lg">
             Material and dimensional verification happen on site. Samples are checked against
@@ -93,7 +93,10 @@ export default function Quality() {
       </Section>
 
       <Section dark>
-        <div className="grid g3" style={{ marginTop: 'clamp(32px,4vw,52px)' }}>
+        <Reveal as="span" className="label label--bar label--sec head-gap" variant="fade">
+          Process controls
+        </Reveal>
+        <div className="grid g3">
           {CONTROLS.map(([t, d], i) => (
             <Reveal className="feature" key={t} delay={i * 70}>
               <span className="feature__num">{String(i + 1).padStart(2, '0')}</span>

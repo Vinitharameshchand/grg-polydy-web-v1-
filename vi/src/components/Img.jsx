@@ -13,10 +13,13 @@ import manifest from '../data/images.json';
 const SIZES = {
   /* full-bleed hero */
   hero: '100vw',
-  /* half the measure on desktop, full width once the split stacks */
-  split: '(max-width: 900px) 100vw, (min-width: 1240px) 600px, 50vw',
+  /* six of the twelve columns on desktop, full width once the split stacks.
+     Sized for the drawn image, not the box: a 3:2 photo covering a 4:3 box
+     is 1.125× its width, and the parallax adds 1.09× — so ×1.23. Sizing
+     for the box picked a derivative that was then upscaled (soft). */
+  split: '(max-width: 900px) 123vw, (min-width: 1400px) 785px, 57vw',
   /* three-up gallery -> two-up -> one */
-  gallery: '(max-width: 560px) 100vw, (max-width: 900px) 50vw, (min-width: 1240px) 390px, 33vw',
+  gallery: '(max-width: 560px) 100vw, (max-width: 900px) 50vw, (min-width: 1400px) 416px, 33vw',
   /* four-up tile row */
   tile: '(max-width: 620px) 100vw, (max-width: 980px) 50vw, (min-width: 1240px) 285px, 25vw'
 };

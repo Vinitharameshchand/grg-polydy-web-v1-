@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import {
   Arrow,
   CTA,
+  ColumnGuide,
   CountUp,
   Reveal,
   Section,
@@ -60,9 +61,9 @@ export default function Home() {
         </div>
         <span className="hero__scrim" aria-hidden="true" />
         <span className="hero__bg" aria-hidden="true">
-          <span className="hero__rule" ref={gridRef} />
-          <span className="hero__glow hero__glow--warm" />
-          <span className="hero__glow hero__glow--cool" />
+          <span className="hero__rule" ref={gridRef}>
+            <ColumnGuide />
+          </span>
         </span>
         {/* Injection mould in WebGL; loads after first paint. */}
         <Hero3D />
@@ -119,7 +120,7 @@ export default function Home() {
       {/* ---------------- who we are ---------------- */}
       <Section>
         <div className="cols">
-          <Reveal as="span" className="label">
+          <Reveal as="span" className="label label--bar label--sec">
             Who we are
           </Reveal>
           <Reveal className="stack" delay={80}>
@@ -142,7 +143,7 @@ export default function Home() {
 
       {/* ---------------- capabilities ---------------- */}
       <Section dark id="what-we-offer">
-        <SectionHead num="01" label="What we offer" title="One supplier, from concept to finished part.">
+        <SectionHead label="What we offer" title="One supplier, from concept to finished part.">
           <p className="lead">
             Development, tooling, moulding and finishing are handled under one roof — removing the
             hand-offs where programmes usually lose time.
@@ -167,7 +168,7 @@ export default function Home() {
           ))}
         </div>
 
-        <Reveal style={{ marginTop: 36 }}>
+        <Reveal className="mt-5">
           <Link className="link" to="/capabilities">
             All capabilities, including metal casting and tooling transfer
             <Arrow />
@@ -177,7 +178,7 @@ export default function Home() {
 
       {/* ---------------- products ---------------- */}
       <Section>
-        <SectionHead num="02" label="Our parts" title="Components we make.">
+        <SectionHead label="Our parts" title="Components we make.">
           <p className="lead">
             Structural mouldings, appearance-critical trim and finished assemblies — moulded,
             painted, plated and printed in-house.
@@ -193,7 +194,7 @@ export default function Home() {
           }))}
         />
 
-        <Reveal style={{ marginTop: 36 }}>
+        <Reveal className="mt-5">
           <Link className="link" to="/products">
             View the product gallery
             <Arrow />
@@ -203,7 +204,7 @@ export default function Home() {
 
       {/* ---------------- industries ---------------- */}
       <Section tint>
-        <SectionHead num="03" label="Domain expertise" title="Four industries, one quality system.">
+        <SectionHead label="Domain expertise" title="Four industries, one quality system.">
           <p className="lead">
             The same IATF 16949 discipline governs every part number we run, whatever sector it
             ships into.
@@ -238,7 +239,7 @@ export default function Home() {
           caption="Tooling — mould preparation"
           reverse
         >
-          <span className="label">New product development</span>
+          <span className="label label--bar label--sec">New product development</span>
           <h2 className="h2">A dedicated NPD team, from feasibility to mass production.</h2>
           <p className="body-lg">
             Our NPD function carries a programme from customer requirement review through tool
@@ -263,7 +264,7 @@ export default function Home() {
       {/* Named here, explained on /quality — the full descriptions used to run
           on both pages. */}
       <Section tint>
-        <SectionHead num="04" label="Quality" title="Certified systems, verified practice." />
+        <SectionHead label="Quality" title="Certified systems, verified practice." />
         <Reveal as="ul" className="certstrip">
           {certifications.map((c) => (
             <li key={c.name}>
@@ -272,7 +273,7 @@ export default function Home() {
             </li>
           ))}
         </Reveal>
-        <Reveal style={{ marginTop: 32 }}>
+        <Reveal className="mt-5">
           <Link className="link" to="/quality">
             What each certification commits us to
             <Arrow />
